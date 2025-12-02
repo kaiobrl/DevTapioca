@@ -1,3 +1,19 @@
+// Configuration and validation
+const CONFIG = {
+    WHATSAPP_NUMBER: '5583981374944',
+    CART_STORAGE_KEY: 'cart',
+    THEME_STORAGE_KEY: 'theme',
+    MAX_CART_ITEMS: 99,
+    TOAST_DURATION: 3000
+};
+
+const VALIDATION = {
+    NAME: /^[a-záàâãéèêíïóôõöúçñ\s]{2,50}$/i,
+    ADDRESS: /^.{5,100}$/,
+    PHONE: /^\d{10,11}$/,
+    EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+};
+
 document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // TOAST NOTIFICATIONS
@@ -13,20 +29,26 @@ document.addEventListener('DOMContentLoaded', () => {
     window.showToast = function (message, type = 'success') {
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
-        toast.innerHTML = `
-            <span>${type === 'success' ? '✅' : '⚠️'}</span>
-            <p>${message}</p>
-        `;
 
+        // Safe construction to avoid XSS
+        const icon = document.createElement('span');
+        icon.textContent = type === 'success' ? '✅' : '⚠️';
+
+        const text = document.createElement('p');
+        // strip any HTML tags from incoming message
+        text.textContent = String(message).replace(/<[^>]*>/g, '');
+
+        toast.appendChild(icon);
+        toast.appendChild(text);
         toastContainer.appendChild(toast);
 
-        // Remove after 3 seconds
+        // Remove after configured duration
         setTimeout(() => {
             toast.style.animation = 'slideOut 0.3s forwards';
             setTimeout(() => {
                 toast.remove();
             }, 300);
-        }, 3000);
+        }, CONFIG.TOAST_DURATION);
     };
 
     // ==========================================
@@ -70,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // THEME TOGGLE
     // ==========================================
     const themeBtn = document.getElementById('theme-toggle');
-    const savedTheme = localStorage.getItem('theme');
+    const savedTheme = localStorage.getItem(CONFIG.THEME_STORAGE_KEY);
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
     const initTheme = savedTheme ? savedTheme : (prefersDark ? 'dark' : 'light');
 
@@ -97,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const isDark = document.body.getAttribute('data-theme') === 'dark';
             const next = isDark ? 'light' : 'dark';
             applyTheme(next);
-            localStorage.setItem('theme', next);
+            localStorage.setItem(CONFIG.THEME_STORAGE_KEY, next);
         });
     }
 
@@ -172,7 +194,29 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     // SHOPPING CART
     // ==========================================
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    // Safe localStorage helpers to avoid exceptions (quota, corrupt JSON)
+    function getSafeStorage(key, defaultValue) {
+        try {
+            const raw = localStorage.getItem(key);
+            return raw ? JSON.parse(raw) : (defaultValue === undefined ? [] : defaultValue);
+        } catch (e) {
+            console.warn(`Failed to read storage key ${key}:`, e);
+            return defaultValue === undefined ? [] : defaultValue;
+        }
+    }
+
+    function setSafeStorage(key, value) {
+        try {
+            localStorage.setItem(key, JSON.stringify(value));
+            return true;
+        } catch (e) {
+            console.error(`Failed to write storage key ${key}:`, e);
+            return false;
+        }
+    }
+
+    // initialize cart from safe storage
+    let cart = getSafeStorage(CONFIG.CART_STORAGE_KEY, []);
 
     const cartToggle = document.getElementById('cart-toggle');
     const cartSidebar = document.getElementById('cart-sidebar');
@@ -240,52 +284,111 @@ document.addEventListener('DOMContentLoaded', () => {
         return `R$ ${price.toFixed(2).replace('.', ',')}`;
     }
 
-    // Save cart to localStorage
+    // Save cart to localStorage (safe)
     function saveCart() {
-        localStorage.setItem('cart', JSON.stringify(cart));
+        setSafeStorage(CONFIG.CART_STORAGE_KEY, cart);
     }
 
-    // Render cart items
+    // Render cart items (optimized)
     function renderCart() {
         if (cart.length === 0) {
             cartEmpty.style.display = 'block';
             cartItems.style.display = 'none';
             cartTotalPrice.textContent = formatPrice(0);
             updateCartCount();
+            // clean any previous delegated handler
+            if (cartItems._handler) {
+                cartItems.removeEventListener('click', cartItems._handler);
+                cartItems._handler = null;
+            }
+            cartItems.innerHTML = '';
             return;
         }
 
         cartEmpty.style.display = 'none';
         cartItems.style.display = 'block';
 
-        cartItems.innerHTML = cart.map((item, index) => `
-            <li class="cart-item">
-                <img src="${item.image}" alt="${item.name}">
-                <div class="cart-item-details">
-                    <h4>${item.name}</h4>
-                    <p class="cart-item-price">${formatPrice(item.price)}</p>
-                </div>
-                <div class="cart-item-controls">
-                    <button class="qty-btn qty-minus" data-index="${index}" aria-label="Diminuir quantidade">−</button>
-                    <span class="qty-display">${item.quantity}</span>
-                    <button class="qty-btn qty-plus" data-index="${index}" aria-label="Aumentar quantidade">+</button>
-                </div>
-                <button class="cart-item-remove" data-index="${index}" aria-label="Remover item">🗑️</button>
-            </li>
-        `).join('');
+        // Build items using DocumentFragment to reduce reflows
+        const fragment = document.createDocumentFragment();
 
-        // Add event listeners to quantity buttons
-        document.querySelectorAll('.qty-minus').forEach(btn => {
-            btn.addEventListener('click', () => decreaseQuantity(parseInt(btn.dataset.index)));
+        cart.forEach((item, index) => {
+            const li = document.createElement('li');
+            li.className = 'cart-item';
+
+            const img = document.createElement('img');
+            img.src = item.image;
+            img.alt = item.name;
+
+            const details = document.createElement('div');
+            details.className = 'cart-item-details';
+
+            const h4 = document.createElement('h4');
+            h4.textContent = item.name;
+
+            const price = document.createElement('p');
+            price.className = 'cart-item-price';
+            price.textContent = formatPrice(item.price);
+
+            details.appendChild(h4);
+            details.appendChild(price);
+
+            const controls = document.createElement('div');
+            controls.className = 'cart-item-controls';
+
+            const minusBtn = document.createElement('button');
+            minusBtn.className = 'qty-btn qty-minus';
+            minusBtn.dataset.index = index;
+            minusBtn.setAttribute('aria-label', 'Diminuir quantidade');
+            minusBtn.textContent = '−';
+
+            const qtyDisplay = document.createElement('span');
+            qtyDisplay.className = 'qty-display';
+            qtyDisplay.textContent = item.quantity;
+
+            const plusBtn = document.createElement('button');
+            plusBtn.className = 'qty-btn qty-plus';
+            plusBtn.dataset.index = index;
+            plusBtn.setAttribute('aria-label', 'Aumentar quantidade');
+            plusBtn.textContent = '+';
+
+            controls.appendChild(minusBtn);
+            controls.appendChild(qtyDisplay);
+            controls.appendChild(plusBtn);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'cart-item-remove';
+            removeBtn.dataset.index = index;
+            removeBtn.setAttribute('aria-label', 'Remover item');
+            removeBtn.textContent = '🗑️';
+
+            li.appendChild(img);
+            li.appendChild(details);
+            li.appendChild(controls);
+            li.appendChild(removeBtn);
+
+            fragment.appendChild(li);
         });
 
-        document.querySelectorAll('.qty-plus').forEach(btn => {
-            btn.addEventListener('click', () => increaseQuantity(parseInt(btn.dataset.index)));
-        });
+        cartItems.innerHTML = '';
+        cartItems.appendChild(fragment);
 
-        document.querySelectorAll('.cart-item-remove').forEach(btn => {
-            btn.addEventListener('click', () => removeItem(parseInt(btn.dataset.index)));
-        });
+        // Delegated handler for cart controls (attach once)
+        if (cartItems._handler) {
+            cartItems.removeEventListener('click', cartItems._handler);
+        }
+
+        cartItems._handler = function (e) {
+            const target = e.target;
+            if (target.classList.contains('qty-minus')) {
+                decreaseQuantity(parseInt(target.dataset.index, 10));
+            } else if (target.classList.contains('qty-plus')) {
+                increaseQuantity(parseInt(target.dataset.index, 10));
+            } else if (target.classList.contains('cart-item-remove')) {
+                removeItem(parseInt(target.dataset.index, 10));
+            }
+        };
+
+        cartItems.addEventListener('click', cartItems._handler);
 
         cartTotalPrice.textContent = formatPrice(calculateTotal());
         updateCartCount();
@@ -293,14 +396,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add item to cart
     function addToCart(name, price, image) {
+        // Basic validation
+        if (!name || !price || Number.isNaN(Number(price))) {
+            showToast('Erro ao adicionar item: dados inválidos.', 'error');
+            return;
+        }
+
+        const numericPrice = parseFloat(price);
         const existingItem = cart.find(item => item.name === name);
 
         if (existingItem) {
-            existingItem.quantity++;
-            showToast(`Mais uma unidade de <b>${name}</b> adicionada!`);
+            if (existingItem.quantity < CONFIG.MAX_CART_ITEMS) {
+                existingItem.quantity += 1;
+                showToast(`Mais uma unidade de ${name} adicionada!`);
+            } else {
+                showToast(`Limite de ${CONFIG.MAX_CART_ITEMS} unidades atingido.`, 'error');
+                return;
+            }
         } else {
-            cart.push({ name, price, image, quantity: 1 });
-            showToast(`<b>${name}</b> adicionado ao carrinho!`);
+            cart.push({ name: String(name), price: numericPrice, image: String(image), quantity: 1 });
+            showToast(`${name} adicionado ao carrinho!`);
         }
 
         saveCart();
@@ -319,8 +434,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Increase quantity
     function increaseQuantity(index) {
-        if (cart[index].quantity < 99) {
-            cart[index].quantity++;
+        if (!cart[index]) return;
+        if (cart[index].quantity < CONFIG.MAX_CART_ITEMS) {
+            cart[index].quantity += 1;
             saveCart();
             renderCart();
         }
@@ -416,16 +532,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Validate checkout form
+    function validateCheckoutForm() {
+        const name = document.getElementById('client-name').value.trim();
+        const deliveryType = document.querySelector('input[name="delivery-type"]:checked')?.value;
+        const address = addressInput.value.trim();
+
+        if (!VALIDATION.NAME.test(name)) {
+            showToast('Nome inválido. Use 2-50 caracteres.', 'error');
+            return false;
+        }
+
+        if (!deliveryType) {
+            showToast('Selecione o tipo de entrega.', 'error');
+            return false;
+        }
+
+        if (deliveryType === 'delivery' && !VALIDATION.ADDRESS.test(address)) {
+            showToast('Endereço inválido. Informe corretamente.', 'error');
+            return false;
+        }
+
+        return true;
+    }
+
     // Handle Form Submission
     checkoutForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const name = document.getElementById('client-name').value;
-        const deliveryType = document.querySelector('input[name="delivery-type"]:checked').value;
-        const address = addressInput.value;
-        const payment = paymentSelect.options[paymentSelect.selectedIndex].text;
-        const change = changeInput.value;
+        if (!validateCheckoutForm()) return;
 
+        const name = document.getElementById('client-name').value.trim();
+        const deliveryType = document.querySelector('input[name="delivery-type"]:checked').value;
+        const address = addressInput.value.trim();
+        const payment = paymentSelect.options[paymentSelect.selectedIndex].text;
+        const change = changeInput.value.trim();
+
+        // Build message safely
         let message = `Olá! Gostaria de fazer o seguinte pedido:\n\n`;
         message += `*Cliente:* ${name}\n`;
         message += `*Tipo:* ${deliveryType === 'delivery' ? 'Entrega 🛵' : 'Retirada 🏃'}\n`;
@@ -436,17 +579,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
         message += `\n*Pedido:*\n`;
         cart.forEach(item => {
-            message += `${item.quantity}x ${item.name} - ${formatPrice(item.price * item.quantity)}\n`;
+            const safeName = String(item.name).replace(/[<>"'&]/g, '');
+            message += `${item.quantity}x ${safeName} - ${formatPrice(item.price * item.quantity)}\n`;
         });
 
         message += `\n*Total: ${formatPrice(calculateTotal())}*\n`;
         message += `*Pagamento:* ${payment}\n`;
 
-        if (change) {
-            message += `*Troco para:* ${change}\n`;
+        if (change && /^\d+[.,]?\d*$/.test(change)) {
+            message += `*Troco para:* R$ ${change}\n`;
         }
 
-        const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
+        const whatsappUrl = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
         window.open(whatsappUrl, '_blank');
 
         closeCheckoutModal();
@@ -507,4 +651,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial render
     renderCart();
+
+    // Register service worker from external script (avoids inline script for CSP)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(registration => console.log('SW registrado com sucesso:', registration.scope))
+                .catch(err => console.warn('Falha ao registrar SW:', err));
+        });
+    }
 });
