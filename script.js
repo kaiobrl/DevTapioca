@@ -250,7 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             cartSidebar.setAttribute('role', 'dialog');
             cartSidebar.setAttribute('aria-modal', 'true');
-        } catch (e) {}
+        } catch (e) { }
         enableFocusTrap(cartSidebar, closeCart);
     }
 
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             cartSidebar.removeAttribute('role');
             cartSidebar.removeAttribute('aria-modal');
-        } catch (e) {}
+        } catch (e) { }
     }
 
     // Update cart count badge
@@ -455,13 +455,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Clear cart
-    function clearCart() {
-        if (confirm('Tem certeza que deseja limpar o carrinho?')) {
-            cart = [];
-            saveCart();
-            renderCart();
-            showToast('Carrinho limpo com sucesso!', 'success');
+    // Clear cart
+    // If `force` is true, skip the confirmation dialog (useful when called programmatically)
+    function clearCart(force = false) {
+        // If not forced, attempt to show a confirmation dialog to the user.
+        if (!force) {
+            // If page is not focused or hidden, avoid calling window.confirm (browsers may suppress it)
+            if (document.hidden || !document.hasFocus()) {
+                // Fallback: show toast and abort clearing to avoid unexpected behavior
+                showToast('Não foi possível abrir a confirmação porque a página não está ativa.', 'error');
+                return;
+            }
+
+            if (!confirm('Tem certeza que deseja limpar o carrinho?')) {
+                return;
+            }
         }
+
+        cart = [];
+        saveCart();
+        renderCart();
+        showToast('Carrinho limpo com sucesso!', 'success');
     }
 
     // ==========================================
@@ -490,7 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             checkoutModal.setAttribute('role', 'dialog');
             checkoutModal.setAttribute('aria-modal', 'true');
-        } catch (e) {}
+        } catch (e) { }
         enableFocusTrap(checkoutModal, closeCheckoutModal);
         const firstField = checkoutModal.querySelector('input, textarea, select, button');
         if (firstField) {
@@ -506,7 +520,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             checkoutModal.removeAttribute('role');
             checkoutModal.removeAttribute('aria-modal');
-        } catch (e) {}
+        } catch (e) { }
     }
 
     // Toggle Address Field
@@ -594,7 +608,8 @@ document.addEventListener('DOMContentLoaded', () => {
         window.open(whatsappUrl, '_blank');
 
         closeCheckoutModal();
-        clearCart(); // Optional: clear cart after successful order
+        // Clear without confirmation because this action follows an explicit user submit and may open a new tab
+        clearCart(true); // Optional: clear cart after successful order
     });
 
     // Event listeners
