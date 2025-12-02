@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
+    <meta name="theme-color" content="#ff6b6b">
     <title>Tapiocaria do Dev</title>
 </head>
 
@@ -70,8 +71,15 @@
         <h2>Nosso Cardápio</h2>
         <p>Escolha seu favorito e faça seu pedido pelo WhatsApp</p>
 
+        <div class="menu-filters">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="salgadas">Salgadas</button>
+            <button class="filter-btn" data-filter="doces">Doces</button>
+            <button class="filter-btn" data-filter="bebidas">Bebidas</button>
+        </div>
+
         <ul class="menu-grid">
-            <li class="menu-item" data-name="Tapioca Clássico" data-price="28.90"
+            <li class="menu-item" data-category="salgadas" data-name="Tapioca Clássico" data-price="28.90"
                 data-image="https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=1486&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
                 <img loading="lazy"
                     src="https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=1486&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -83,7 +91,7 @@
                 <button class="btn add-to-cart">Adicionar ao Carrinho</button>
             </li>
 
-            <li class="menu-item" data-name="Tapioca Bacon" data-price="34.90"
+            <li class="menu-item" data-category="salgadas" data-name="Tapioca Bacon" data-price="34.90"
                 data-image="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
                 <img loading="lazy"
                     src="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -94,7 +102,7 @@
                 <button class="btn add-to-cart">Adicionar ao Carrinho</button>
             </li>
 
-            <li class="menu-item" data-name="Tapioca Dupla" data-price="42.90"
+            <li class="menu-item" data-category="salgadas" data-name="Tapioca Dupla" data-price="42.90"
                 data-image="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
                 <img loading="lazy"
                     src="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -106,7 +114,7 @@
                 <button class="btn add-to-cart">Adicionar ao Carrinho</button>
             </li>
 
-            <li class="menu-item" data-name="Tapioca Veggie" data-price="32.90"
+            <li class="menu-item" data-category="salgadas" data-name="Tapioca Veggie" data-price="32.90"
                 data-image="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
                 <img loading="lazy"
                     src="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -117,7 +125,7 @@
                 <button class="btn add-to-cart">Adicionar ao Carrinho</button>
             </li>
 
-            <li class="menu-item" data-name="Tapioca Doce" data-price="18.90"
+            <li class="menu-item" data-category="doces" data-name="Tapioca Doce" data-price="18.90"
                 data-image="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
                 <img loading="lazy"
                     src="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -128,7 +136,7 @@
                 <button class="btn add-to-cart">Adicionar ao Carrinho</button>
             </li>
 
-            <li class="menu-item" data-name="Suco Natural" data-price="16.90"
+            <li class="menu-item" data-category="bebidas" data-name="Suco Natural" data-price="16.90"
                 data-image="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
                 <img loading="lazy"
                     src="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -219,265 +227,69 @@
         </div>
     </aside>
 
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Finalizar Pedido</h2>
+                <button id="close-modal" class="modal-close">&times;</button>
+            </div>
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label for="client-name">Seu Nome</label>
+                    <input type="text" id="client-name" required placeholder="Digite seu nome">
+                </div>
+
+                <div class="form-group">
+                    <label>Forma de Entrega</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="delivery-type" value="delivery" checked>
+                            <span>Entrega 🛵</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="delivery-type" value="pickup">
+                            <span>Retirada 🏃</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="address-group" class="form-group">
+                    <label for="client-address">Endereço de Entrega</label>
+                    <textarea id="client-address" rows="2" placeholder="Rua, número, complemento..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="payment-method">Forma de Pagamento</label>
+                    <select id="payment-method" required>
+                        <option value="" disabled selected>Selecione...</option>
+                        <option value="pix">PIX</option>
+                        <option value="card">Cartão (Maquininha)</option>
+                        <option value="cash">Dinheiro</option>
+                    </select>
+                </div>
+
+                <div id="change-group" class="form-group hidden">
+                    <label for="client-change">Troco para quanto?</label>
+                    <input type="text" id="client-change" placeholder="R$ 0,00">
+                </div>
+
+                <button type="submit" class="btn btn-full">Enviar Pedido no WhatsApp 📲</button>
+            </form>
+        </div>
+    </div>
+
+    <link rel="manifest" href="manifest.json">
     <script>
-        // Mobile Menu Toggle
-        (function () {
-            const menuToggle = document.getElementById('menu-toggle');
-            const nav = document.getElementById('main-nav');
-
-            menuToggle.addEventListener('click', function () {
-                const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
-                menuToggle.setAttribute('aria-expanded', !isExpanded);
-                menuToggle.classList.toggle('active');
-                nav.classList.toggle('active');
-                document.body.classList.toggle('menu-open');
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(registration => console.log('SW registrado com sucesso:', registration.scope))
+                    .catch(err => console.log('Falha ao registrar SW:', err));
             });
-
-            // Close menu when clicking nav links
-            const navLinks = nav.querySelectorAll('a');
-            navLinks.forEach(link => {
-                link.addEventListener('click', function () {
-                    menuToggle.setAttribute('aria-expanded', 'false');
-                    menuToggle.classList.remove('active');
-                    nav.classList.remove('active');
-                    document.body.classList.remove('menu-open');
-                });
-            });
-
-            // Close menu when clicking outside
-            document.addEventListener('click', function (e) {
-                if (!nav.contains(e.target) && !menuToggle.contains(e.target)) {
-                    menuToggle.setAttribute('aria-expanded', 'false');
-                    menuToggle.classList.remove('active');
-                    nav.classList.remove('active');
-                    document.body.classList.remove('menu-open');
-                }
-            });
-        })();
-
-        // Theme Toggle
-        (function () {
-            const btn = document.getElementById('theme-toggle');
-            const root = document.documentElement;
-            // read saved preference
-            const saved = localStorage.getItem('theme');
-            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            const initTheme = saved ? saved : (prefersDark ? 'dark' : 'light');
-
-            function applyTheme(t) {
-                if (t === 'dark') {
-                    document.body.setAttribute('data-theme', 'dark');
-                    btn.textContent = '☀️';
-                    btn.setAttribute('aria-pressed', 'true');
-                } else {
-                    document.body.removeAttribute('data-theme');
-                    btn.textContent = '🌙';
-                    btn.setAttribute('aria-pressed', 'false');
-                }
-            }
-
-            applyTheme(initTheme);
-
-            btn.addEventListener('click', function () {
-                const isDark = document.body.getAttribute('data-theme') === 'dark';
-                const next = isDark ? 'light' : 'dark';
-                applyTheme(next);
-                localStorage.setItem('theme', next);
-            });
-        })();
-
-        // Shopping Cart Management
-        (function () {
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
-            const cartToggle = document.getElementById('cart-toggle');
-            const cartSidebar = document.getElementById('cart-sidebar');
-            const cartOverlay = document.getElementById('cart-overlay');
-            const cartClose = document.getElementById('cart-close');
-            const cartCount = document.getElementById('cart-count');
-            const cartItems = document.getElementById('cart-items');
-            const cartEmpty = document.getElementById('cart-empty');
-            const cartTotalPrice = document.getElementById('cart-total-price');
-            const clearCartBtn = document.getElementById('clear-cart');
-            const checkoutBtn = document.getElementById('checkout-btn');
-            const addToCartBtns = document.querySelectorAll('.add-to-cart');
-
-            // Open cart
-            function openCart() {
-                cartSidebar.classList.add('active');
-                cartOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
-
-            // Close cart
-            function closeCart() {
-                cartSidebar.classList.remove('active');
-                cartOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-
-            // Update cart count badge
-            function updateCartCount() {
-                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
-                cartCount.textContent = totalItems;
-                cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
-            }
-
-            // Calculate total price
-            function calculateTotal() {
-                return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            }
-
-            // Format price
-            function formatPrice(price) {
-                return `R$ ${price.toFixed(2).replace('.', ',')}`;
-            }
-
-            // Save cart to localStorage
-            function saveCart() {
-                localStorage.setItem('cart', JSON.stringify(cart));
-            }
-
-            // Render cart items
-            function renderCart() {
-                if (cart.length === 0) {
-                    cartEmpty.style.display = 'block';
-                    cartItems.style.display = 'none';
-                    cartTotalPrice.textContent = formatPrice(0);
-                    updateCartCount();
-                    return;
-                }
-
-                cartEmpty.style.display = 'none';
-                cartItems.style.display = 'block';
-
-                cartItems.innerHTML = cart.map((item, index) => `
-                    <li class="cart-item">
-                        <img src="${item.image}" alt="${item.name}">
-                        <div class="cart-item-details">
-                            <h4>${item.name}</h4>
-                            <p class="cart-item-price">${formatPrice(item.price)}</p>
-                        </div>
-                        <div class="cart-item-controls">
-                            <button class="qty-btn qty-minus" data-index="${index}" aria-label="Diminuir quantidade">−</button>
-                            <span class="qty-display">${item.quantity}</span>
-                            <button class="qty-btn qty-plus" data-index="${index}" aria-label="Aumentar quantidade">+</button>
-                        </div>
-                        <button class="cart-item-remove" data-index="${index}" aria-label="Remover item">🗑️</button>
-                    </li>
-                `).join('');
-
-                // Add event listeners to quantity buttons
-                document.querySelectorAll('.qty-minus').forEach(btn => {
-                    btn.addEventListener('click', () => decreaseQuantity(parseInt(btn.dataset.index)));
-                });
-
-                document.querySelectorAll('.qty-plus').forEach(btn => {
-                    btn.addEventListener('click', () => increaseQuantity(parseInt(btn.dataset.index)));
-                });
-
-                document.querySelectorAll('.cart-item-remove').forEach(btn => {
-                    btn.addEventListener('click', () => removeItem(parseInt(btn.dataset.index)));
-                });
-
-                cartTotalPrice.textContent = formatPrice(calculateTotal());
-                updateCartCount();
-            }
-
-            // Add item to cart
-            function addToCart(name, price, image) {
-                const existingItem = cart.find(item => item.name === name);
-
-                if (existingItem) {
-                    existingItem.quantity++;
-                } else {
-                    cart.push({ name, price, image, quantity: 1 });
-                }
-
-                saveCart();
-                renderCart();
-                openCart();
-            }
-
-            // Remove item from cart
-            function removeItem(index) {
-                cart.splice(index, 1);
-                saveCart();
-                renderCart();
-            }
-
-            // Increase quantity
-            function increaseQuantity(index) {
-                if (cart[index].quantity < 99) {
-                    cart[index].quantity++;
-                    saveCart();
-                    renderCart();
-                }
-            }
-
-            // Decrease quantity
-            function decreaseQuantity(index) {
-                if (cart[index].quantity > 1) {
-                    cart[index].quantity--;
-                } else {
-                    removeItem(index);
-                    return;
-                }
-                saveCart();
-                renderCart();
-            }
-
-            // Clear cart
-            function clearCart() {
-                if (confirm('Tem certeza que deseja limpar o carrinho?')) {
-                    cart = [];
-                    saveCart();
-                    renderCart();
-                }
-            }
-
-            // Checkout - Send to WhatsApp
-            function checkout() {
-                if (cart.length === 0) {
-                    alert('Seu carrinho está vazio!');
-                    return;
-                }
-
-                let message = 'Olá! Gostaria de fazer o seguinte pedido:\n\n';
-
-                cart.forEach(item => {
-                    message += `${item.quantity}x ${item.name} - ${formatPrice(item.price * item.quantity)}\n`;
-                });
-
-                message += `\n*Total: ${formatPrice(calculateTotal())}*`;
-
-                const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
-                window.open(whatsappUrl, '_blank');
-            }
-
-            // Event listeners
-            cartToggle.addEventListener('click', openCart);
-            cartClose.addEventListener('click', closeCart);
-            cartOverlay.addEventListener('click', closeCart);
-            clearCartBtn.addEventListener('click', clearCart);
-            checkoutBtn.addEventListener('click', checkout);
-
-            // Add to cart buttons
-            addToCartBtns.forEach(btn => {
-                btn.addEventListener('click', function () {
-                    const menuItem = this.closest('.menu-item');
-                    const name = menuItem.dataset.name;
-                    const price = parseFloat(menuItem.dataset.price);
-                    const image = menuItem.dataset.image;
-
-                    addToCart(name, price, image);
-                });
-            });
-
-            // Initial render
-            renderCart();
-        })();
+        }
     </script>
+    <script src="script.js"></script>
 </body>
 
 </html>
