@@ -4,6 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================
     const toastContainer = document.createElement('div');
     toastContainer.className = 'toast-container';
+    // Accessibility: announce toasts to screen readers
+    toastContainer.setAttribute('aria-live', 'polite');
+    toastContainer.setAttribute('role', 'status');
+    toastContainer.setAttribute('aria-atomic', 'true');
     document.body.appendChild(toastContainer);
 
     window.showToast = function (message, type = 'success') {
@@ -75,10 +79,15 @@ document.addEventListener('DOMContentLoaded', () => {
             document.body.setAttribute('data-theme', 'dark');
             themeBtn.textContent = '☀️';
             themeBtn.setAttribute('aria-pressed', 'true');
+            // update theme-color meta
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', '#0b0c0d');
         } else {
             document.body.removeAttribute('data-theme');
             themeBtn.textContent = '🌙';
             themeBtn.setAttribute('aria-pressed', 'false');
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', '#ff6b35');
         }
     }
 
@@ -90,6 +99,74 @@ document.addEventListener('DOMContentLoaded', () => {
             applyTheme(next);
             localStorage.setItem('theme', next);
         });
+    }
+
+    // ==========================================
+    // FOCUS TRAP / ACCESSIBILITY HELPERS
+    // ==========================================
+    const focusTrap = {
+        container: null,
+        lastFocused: null,
+        handler: null
+    };
+
+    function enableFocusTrap(container, onClose) {
+        // disable any existing trap
+        disableFocusTrap();
+        focusTrap.lastFocused = document.activeElement;
+        focusTrap.container = container;
+        // ensure container is reachable
+        if (!container.hasAttribute('tabindex')) container.setAttribute('tabindex', '-1');
+
+        const selector = 'a[href], area[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+        const all = Array.from(container.querySelectorAll(selector)).filter(el => el.offsetParent !== null);
+        const first = all[0] || container;
+        const last = all.length ? all[all.length - 1] : first;
+
+        try { first.focus({ preventScroll: true }); } catch (e) { first.focus(); }
+
+        focusTrap.handler = function (e) {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                if (typeof onClose === 'function') onClose();
+                return;
+            }
+
+            if (e.key === 'Tab') {
+                if (all.length === 0) {
+                    e.preventDefault();
+                    return;
+                }
+                if (e.shiftKey) {
+                    if (document.activeElement === first) {
+                        e.preventDefault();
+                        last.focus();
+                    }
+                } else {
+                    if (document.activeElement === last) {
+                        e.preventDefault();
+                        first.focus();
+                    }
+                }
+            }
+        };
+
+        document.addEventListener('keydown', focusTrap.handler);
+    }
+
+    function disableFocusTrap() {
+        if (!focusTrap.container) return;
+        if (focusTrap.handler) document.removeEventListener('keydown', focusTrap.handler);
+        try {
+            if (focusTrap.lastFocused && typeof focusTrap.lastFocused.focus === 'function') {
+                focusTrap.lastFocused.focus();
+            }
+        } catch (e) {
+            // ignore
+        }
+        focusTrap.container = null;
+        focusTrap.lastFocused = null;
+        focusTrap.handler = null;
     }
 
     // ==========================================
@@ -114,6 +191,23 @@ document.addEventListener('DOMContentLoaded', () => {
         cartSidebar.classList.add('active');
         cartOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
+        // Move focus to cart title for keyboard/screen-reader users
+        try {
+            const title = cartSidebar.querySelector('h2');
+            if (title) {
+                // ensure element is focusable (tabindex already set in markup)
+                title.focus({ preventScroll: true });
+            }
+        } catch (e) {
+            // fail silently
+            console.warn('Focus to cart title failed', e);
+        }
+        // Mark as dialog and enable focus trap
+        try {
+            cartSidebar.setAttribute('role', 'dialog');
+            cartSidebar.setAttribute('aria-modal', 'true');
+        } catch (e) {}
+        enableFocusTrap(cartSidebar, closeCart);
     }
 
     // Close cart
@@ -121,6 +215,12 @@ document.addEventListener('DOMContentLoaded', () => {
         cartSidebar.classList.remove('active');
         cartOverlay.classList.remove('active');
         document.body.style.overflow = '';
+        // disable focus trap and restore attributes
+        disableFocusTrap();
+        try {
+            cartSidebar.removeAttribute('role');
+            cartSidebar.removeAttribute('aria-modal');
+        } catch (e) {}
     }
 
     // Update cart count badge
@@ -268,12 +368,29 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         checkoutModal.classList.add('active');
+        // close cart to avoid focus conflicts
         closeCart();
+        // mark modal as dialog and trap focus
+        try {
+            checkoutModal.setAttribute('role', 'dialog');
+            checkoutModal.setAttribute('aria-modal', 'true');
+        } catch (e) {}
+        enableFocusTrap(checkoutModal, closeCheckoutModal);
+        const firstField = checkoutModal.querySelector('input, textarea, select, button');
+        if (firstField) {
+            try { firstField.focus({ preventScroll: true }); } catch (e) { firstField.focus(); }
+        }
     }
 
     // Close Modal
     function closeCheckoutModal() {
         checkoutModal.classList.remove('active');
+        // remove trap and attributes
+        disableFocusTrap();
+        try {
+            checkoutModal.removeAttribute('role');
+            checkoutModal.removeAttribute('aria-modal');
+        } catch (e) {}
     }
 
     // Toggle Address Field

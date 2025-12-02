@@ -13,6 +13,7 @@
     --header-height: 60px;
     --radius: 12px;
     --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    --badge-bg: var(--primary);
 }
 
 /* Light theme variables (default) */
@@ -31,6 +32,8 @@ body[data-theme="dark"] {
     --text: #e6e6e6;
     --muted: #9aa0a6;
     --footer-bg: #070707;
+    /* slightly brighter badge in dark to improve contrast */
+    --badge-bg: #ff8a5b;
 }
 
 body {
@@ -38,7 +41,16 @@ body {
     line-height: 1.6;
     color: var(--text);
     background: var(--bg);
-    transition: background 0.3s ease, color 0.3s ease;
+    transition: background 240ms ease, color 240ms ease;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation-duration: 0 !important;
+        scroll-behavior: auto;
+    }
 }
 
 /* Prevent scroll when mobile menu is open */
@@ -62,6 +74,29 @@ ul {
 
 html {
     scroll-behavior: smooth;
+}
+
+/* Skip link (accessible keyboard users) */
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+.skip-link:focus {
+    position: fixed;
+    left: 12px;
+    top: 12px;
+    width: auto;
+    height: auto;
+    padding: 8px 12px;
+    background: var(--primary);
+    color: #fff;
+    border-radius: 8px;
+    z-index: 1100;
+    text-decoration: none;
 }
 
 /* ===== BUTTONS ===== */
@@ -101,11 +136,24 @@ html {
 }
 
 /* Focus states for accessibility */
-.btn:focus,
-.logo:focus,
-header nav a:focus {
-    outline: 3px solid rgba(255, 107, 53, 0.18);
+
+/* Use focus-visible to avoid showing outlines on mouse click */
+:focus {
+    outline: none;
+}
+
+:focus-visible {
+    outline: 3px solid rgba(255, 107, 53, 0.22);
     outline-offset: 3px;
+    border-radius: 8px;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.08) inset;
 }
 
 /* ===== HEADER (MOBILE FIRST) ===== */
@@ -320,7 +368,7 @@ header nav a:hover {
     position: absolute;
     top: 15px;
     left: 15px;
-    background-color: var(--primary);
+    background-color: var(--badge-bg);
     color: #fff;
     padding: 5px 12px;
     border-radius: 20px;
@@ -373,6 +421,30 @@ header nav a:hover {
 .sobre h2 {
     font-size: 28px;
     margin-bottom: 16px;
+}
+
+/* Cart & Modal focus / transitions improvements */
+.cart-sidebar {
+    transition: transform 220ms ease, box-shadow 220ms ease;
+}
+.cart-sidebar.active {
+    box-shadow: 0 30px 80px rgba(0,0,0,0.45);
+}
+.cart-sidebar:focus-visible {
+    outline: 3px solid rgba(255, 107, 53, 0.22);
+    outline-offset: 2px;
+}
+.modal-overlay .modal-content {
+    transition: transform 220ms ease, opacity 220ms ease;
+    transform: translateY(8px);
+    opacity: 0;
+}
+.modal-overlay.active .modal-content {
+    transform: translateY(0);
+    opacity: 1;
+}
+.modal-content:focus-visible {
+    outline: 3px solid rgba(255, 107, 53, 0.22);
 }
 
 .sobre article {
