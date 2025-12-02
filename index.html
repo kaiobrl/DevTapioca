@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Tapiocaria do Dev</title>
+</head>
+
+<body>
+    <header>
+        <a href="#" class="logo">🥥 DevTapioca</a>
+        <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <nav id="main-nav">
+            <a href="#">Início</a>
+            <a href="#cardapio">Cardápio</a>
+            <a href="#sobre">Sobre</a>
+            <a href="#contato">Contato</a>
+        </nav>
+        <div class="header-actions">
+            <button id="cart-toggle" class="btn btn-light cart-btn" aria-label="Abrir carrinho">
+                🛒
+                <span id="cart-count" class="cart-badge">0</span>
+            </button>
+            <button id="theme-toggle" class="btn btn-light" aria-pressed="false"
+                aria-label="Alternar tema claro/escuro">🌙</button>
+            <a href="#cardapio" class="btn btn-order">Peça Agora</a>
+        </div>
+    </header>
+
+    <section id="home" class="hero-wrapper">
+        <article class="hero">
+            <div>
+                <h1>O Melhor Tapioca da Cidade</h1>
+                <p>Ingredientes frescos, receitas especiais e entrega rápida. Peça agora e receba em até 40 minutos!</p>
+                <nav class="hero-buttons">
+                    <a href="#cardapio" class="btn">Ver cardápio</a>
+                    <a href="https://wa.me/5511999999999" class="btn btn-outline" target="_blank" rel="noopener">📲
+                        WhatsApp</a>
+                </nav>
+                <ul class="hero-stats">
+                    <li>
+                        <strong>+500</strong>
+                        <span>Clientes felizes</span>
+                    </li>
+                    <li>
+                        <strong>4.9</strong>
+                        Avaliação ⭐
+                    </li>
+                    <li>
+                        <strong>40min</strong>
+                        Ou seu dinheiro de volta
+                    </li>
+
+                </ul>
+            </div>
+
+            <img alt="tapioca"
+                src="https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=1486&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                loading="eager">
+        </article>
+    </section>
+
+    <section id="cardapio" class="cardapio">
+        <h2>Nosso Cardápio</h2>
+        <p>Escolha seu favorito e faça seu pedido pelo WhatsApp</p>
+
+        <ul class="menu-grid">
+            <li class="menu-item" data-name="Tapioca Clássico" data-price="28.90"
+                data-image="https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=1486&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                <img loading="lazy"
+                    src="https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=1486&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    alt="Tapioca Clássico">
+                <span class="badge">Mais Vendido</span>
+                <h3>Tapioca Clássico</h3>
+                <p>Massa de tapioca, queijo coalho, carne seca desfiada e manteiga de garrafa</p>
+                <strong>R$ 28,90</strong>
+                <button class="btn add-to-cart">Adicionar ao Carrinho</button>
+            </li>
+
+            <li class="menu-item" data-name="Tapioca Bacon" data-price="34.90"
+                data-image="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                <img loading="lazy"
+                    src="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    alt="Tapioca Bacon">
+                <h3>Tapioca Bacon</h3>
+                <p>Massa de tapioca, bacon crocante, queijo mussarela e cebola caramelizada</p>
+                <strong>R$ 34,90</strong>
+                <button class="btn add-to-cart">Adicionar ao Carrinho</button>
+            </li>
+
+            <li class="menu-item" data-name="Tapioca Dupla" data-price="42.90"
+                data-image="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                <img loading="lazy"
+                    src="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    alt="Tapioca Dupla">
+                <span class="badge hot">Novidade</span>
+                <h3>Tapioca Dupla</h3>
+                <p>Duas camadas de tapioca, dobro de queijo, carne seca e bacon especial</p>
+                <strong>R$ 42,90</strong>
+                <button class="btn add-to-cart">Adicionar ao Carrinho</button>
+            </li>
+
+            <li class="menu-item" data-name="Tapioca Veggie" data-price="32.90"
+                data-image="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                <img loading="lazy"
+                    src="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    alt="Tapioca Veggie">
+                <h3>Tapioca Veggie</h3>
+                <p>Massa integral, queijo vegano, rúcula, tomate seco e azeite de ervas</p>
+                <strong>R$ 32,90</strong>
+                <button class="btn add-to-cart">Adicionar ao Carrinho</button>
+            </li>
+
+            <li class="menu-item" data-name="Tapioca Doce" data-price="18.90"
+                data-image="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                <img loading="lazy"
+                    src="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    alt="Tapioca Doce">
+                <h3>Tapioca Doce</h3>
+                <p>Tapioca com coco ralado, leite condensado e canela especial</p>
+                <strong>R$ 18,90</strong>
+                <button class="btn add-to-cart">Adicionar ao Carrinho</button>
+            </li>
+
+            <li class="menu-item" data-name="Suco Natural" data-price="16.90"
+                data-image="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                <img loading="lazy"
+                    src="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    alt="Suco Natural">
+                <h3>Tapioca Natural</h3>
+                <p>Suco natural nos sabores: maracujá, acerola, caju ou manga (500ml)</p>
+                <strong>R$ 16,90</strong>
+                <button class="btn add-to-cart">Adicionar ao Carrinho</button>
+            </li>
+        </ul>
+
+    </section>
+
+    <section id="sobre" class="sobre">
+        <img src="https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=1486&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="Nossa cozinha">
+        <article>
+            <h2>Nossa História</h2>
+            <p>Desde 2020, a Tapiocaria nasceu da paixão por tapiocas artesanais. Nosso segredo? Ingredientes
+                selecionados e muito amor em cada preparo.</p>
+            <ul>
+                <li>🥥 <strong>Tapioca Fresca</strong> - 100% selecionada</li>
+                <li>🚀 <strong>Retirada no local</strong> - Máximo 40 minutos</li>
+                <li>💳 <strong>Pagamento Fácil</strong> - PIX, cartão ou dinheiro</li>
+            </ul>
+        </article>
+
+    </section>
+
+    <section id="cta" class="cta">
+        <h2>Bateu a Fome?</h2>
+        <p>Faça seu pedido agora e receba em casa!</p>
+        <a href="https://wa.me/5511999999999" class="btn btn-light">📲 Pedir pelo WhatsApp</a>
+    </section>
+
+    <footer id="contato">
+        <section>
+            <h3>🥥 Tapioca</h3>
+            <p>O melhor tapioca artesanal da cidade.</p>
+        </section>
+
+        <section>
+            <h4>Horário</h4>
+            <p>Terça a Domingo 18h às 23h</p>
+        </section>
+
+        <section>
+            <h4>Contato</h4>
+            <p>📱 (11) 99999-9999
+                📍 Rua das Tapiocas, 123</p>
+        </section>
+
+        <section>
+            <h4>Redes Sociais</h4>
+            <p>Instagram</p>
+        </section>
+
+        <div class="copy">
+            <p>© 2025 - Tapioca</p>
+        </div>
+    </footer>
+
+    <!-- Cart Overlay -->
+    <div id="cart-overlay" class="cart-overlay"></div>
+
+    <!-- Cart Sidebar -->
+    <aside id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h2>🛒 Seu Carrinho</h2>
+            <button id="cart-close" class="cart-close" aria-label="Fechar carrinho">&times;</button>
+        </div>
+
+        <div class="cart-body">
+            <div id="cart-empty" class="cart-empty">
+                <p>🛒 Seu carrinho está vazio</p>
+                <p class="cart-empty-subtitle">Adicione itens deliciosos do nosso cardápio!</p>
+            </div>
+            <ul id="cart-items" class="cart-items"></ul>
+        </div>
+
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <strong id="cart-total-price">R$ 0,00</strong>
+            </div>
+            <button id="clear-cart" class="btn btn-outline">Limpar Carrinho</button>
+            <button id="checkout-btn" class="btn">Finalizar Pedido</button>
+        </div>
+    </aside>
+
+    <script>
+        // Mobile Menu Toggle
+        (function () {
+            const menuToggle = document.getElementById('menu-toggle');
+            const nav = document.getElementById('main-nav');
+
+            menuToggle.addEventListener('click', function () {
+                const isExpanded = menuToggle.getAttribute('aria-expanded') === 'true';
+                menuToggle.setAttribute('aria-expanded', !isExpanded);
+                menuToggle.classList.toggle('active');
+                nav.classList.toggle('active');
+                document.body.classList.toggle('menu-open');
+            });
+
+            // Close menu when clicking nav links
+            const navLinks = nav.querySelectorAll('a');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function () {
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                    menuToggle.classList.remove('active');
+                    nav.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                });
+            });
+
+            // Close menu when clicking outside
+            document.addEventListener('click', function (e) {
+                if (!nav.contains(e.target) && !menuToggle.contains(e.target)) {
+                    menuToggle.setAttribute('aria-expanded', 'false');
+                    menuToggle.classList.remove('active');
+                    nav.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                }
+            });
+        })();
+
+        // Theme Toggle
+        (function () {
+            const btn = document.getElementById('theme-toggle');
+            const root = document.documentElement;
+            // read saved preference
+            const saved = localStorage.getItem('theme');
+            const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initTheme = saved ? saved : (prefersDark ? 'dark' : 'light');
+
+            function applyTheme(t) {
+                if (t === 'dark') {
+                    document.body.setAttribute('data-theme', 'dark');
+                    btn.textContent = '☀️';
+                    btn.setAttribute('aria-pressed', 'true');
+                } else {
+                    document.body.removeAttribute('data-theme');
+                    btn.textContent = '🌙';
+                    btn.setAttribute('aria-pressed', 'false');
+                }
+            }
+
+            applyTheme(initTheme);
+
+            btn.addEventListener('click', function () {
+                const isDark = document.body.getAttribute('data-theme') === 'dark';
+                const next = isDark ? 'light' : 'dark';
+                applyTheme(next);
+                localStorage.setItem('theme', next);
+            });
+        })();
+
+        // Shopping Cart Management
+        (function () {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            const cartToggle = document.getElementById('cart-toggle');
+            const cartSidebar = document.getElementById('cart-sidebar');
+            const cartOverlay = document.getElementById('cart-overlay');
+            const cartClose = document.getElementById('cart-close');
+            const cartCount = document.getElementById('cart-count');
+            const cartItems = document.getElementById('cart-items');
+            const cartEmpty = document.getElementById('cart-empty');
+            const cartTotalPrice = document.getElementById('cart-total-price');
+            const clearCartBtn = document.getElementById('clear-cart');
+            const checkoutBtn = document.getElementById('checkout-btn');
+            const addToCartBtns = document.querySelectorAll('.add-to-cart');
+
+            // Open cart
+            function openCart() {
+                cartSidebar.classList.add('active');
+                cartOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Close cart
+            function closeCart() {
+                cartSidebar.classList.remove('active');
+                cartOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            // Update cart count badge
+            function updateCartCount() {
+                const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+                cartCount.textContent = totalItems;
+                cartCount.style.display = totalItems > 0 ? 'flex' : 'none';
+            }
+
+            // Calculate total price
+            function calculateTotal() {
+                return cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            }
+
+            // Format price
+            function formatPrice(price) {
+                return `R$ ${price.toFixed(2).replace('.', ',')}`;
+            }
+
+            // Save cart to localStorage
+            function saveCart() {
+                localStorage.setItem('cart', JSON.stringify(cart));
+            }
+
+            // Render cart items
+            function renderCart() {
+                if (cart.length === 0) {
+                    cartEmpty.style.display = 'block';
+                    cartItems.style.display = 'none';
+                    cartTotalPrice.textContent = formatPrice(0);
+                    updateCartCount();
+                    return;
+                }
+
+                cartEmpty.style.display = 'none';
+                cartItems.style.display = 'block';
+
+                cartItems.innerHTML = cart.map((item, index) => `
+                    <li class="cart-item">
+                        <img src="${item.image}" alt="${item.name}">
+                        <div class="cart-item-details">
+                            <h4>${item.name}</h4>
+                            <p class="cart-item-price">${formatPrice(item.price)}</p>
+                        </div>
+                        <div class="cart-item-controls">
+                            <button class="qty-btn qty-minus" data-index="${index}" aria-label="Diminuir quantidade">−</button>
+                            <span class="qty-display">${item.quantity}</span>
+                            <button class="qty-btn qty-plus" data-index="${index}" aria-label="Aumentar quantidade">+</button>
+                        </div>
+                        <button class="cart-item-remove" data-index="${index}" aria-label="Remover item">🗑️</button>
+                    </li>
+                `).join('');
+
+                // Add event listeners to quantity buttons
+                document.querySelectorAll('.qty-minus').forEach(btn => {
+                    btn.addEventListener('click', () => decreaseQuantity(parseInt(btn.dataset.index)));
+                });
+
+                document.querySelectorAll('.qty-plus').forEach(btn => {
+                    btn.addEventListener('click', () => increaseQuantity(parseInt(btn.dataset.index)));
+                });
+
+                document.querySelectorAll('.cart-item-remove').forEach(btn => {
+                    btn.addEventListener('click', () => removeItem(parseInt(btn.dataset.index)));
+                });
+
+                cartTotalPrice.textContent = formatPrice(calculateTotal());
+                updateCartCount();
+            }
+
+            // Add item to cart
+            function addToCart(name, price, image) {
+                const existingItem = cart.find(item => item.name === name);
+
+                if (existingItem) {
+                    existingItem.quantity++;
+                } else {
+                    cart.push({ name, price, image, quantity: 1 });
+                }
+
+                saveCart();
+                renderCart();
+                openCart();
+            }
+
+            // Remove item from cart
+            function removeItem(index) {
+                cart.splice(index, 1);
+                saveCart();
+                renderCart();
+            }
+
+            // Increase quantity
+            function increaseQuantity(index) {
+                if (cart[index].quantity < 99) {
+                    cart[index].quantity++;
+                    saveCart();
+                    renderCart();
+                }
+            }
+
+            // Decrease quantity
+            function decreaseQuantity(index) {
+                if (cart[index].quantity > 1) {
+                    cart[index].quantity--;
+                } else {
+                    removeItem(index);
+                    return;
+                }
+                saveCart();
+                renderCart();
+            }
+
+            // Clear cart
+            function clearCart() {
+                if (confirm('Tem certeza que deseja limpar o carrinho?')) {
+                    cart = [];
+                    saveCart();
+                    renderCart();
+                }
+            }
+
+            // Checkout - Send to WhatsApp
+            function checkout() {
+                if (cart.length === 0) {
+                    alert('Seu carrinho está vazio!');
+                    return;
+                }
+
+                let message = 'Olá! Gostaria de fazer o seguinte pedido:\n\n';
+
+                cart.forEach(item => {
+                    message += `${item.quantity}x ${item.name} - ${formatPrice(item.price * item.quantity)}\n`;
+                });
+
+                message += `\n*Total: ${formatPrice(calculateTotal())}*`;
+
+                const whatsappUrl = `https://wa.me/5511999999999?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
+            }
+
+            // Event listeners
+            cartToggle.addEventListener('click', openCart);
+            cartClose.addEventListener('click', closeCart);
+            cartOverlay.addEventListener('click', closeCart);
+            clearCartBtn.addEventListener('click', clearCart);
+            checkoutBtn.addEventListener('click', checkout);
+
+            // Add to cart buttons
+            addToCartBtns.forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const menuItem = this.closest('.menu-item');
+                    const name = menuItem.dataset.name;
+                    const price = parseFloat(menuItem.dataset.price);
+                    const image = menuItem.dataset.image;
+
+                    addToCart(name, price, image);
+                });
+            });
+
+            // Initial render
+            renderCart();
+        })();
+    </script>
+</body>
+
+</html>
