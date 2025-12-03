@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tapioca-v2';
+const CACHE_NAME = 'tapioca-v3';
 const PRECACHE_ASSETS = [
     './',
     './index.html',
@@ -29,7 +29,9 @@ self.addEventListener('activate', (event) => {
         caches.keys().then((keys) => {
             return Promise.all(
                 keys.map((key) => {
+                    // delete old caches that don't match current name or runtime image cache
                     if (key !== CACHE_NAME && key !== RUNTIME_IMAGE_CACHE) {
+                        console.log('Deleting old cache:', key);
                         return caches.delete(key);
                     }
                 })

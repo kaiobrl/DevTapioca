@@ -163,6 +163,33 @@ textarea:focus-visible {
     z-index: 101;
 }
 
+/* Show header actions (cart, theme, order) on mobile and hide logo text */
+.logo-emoji { display: inline; }
+.logo-text { display: inline; }
+.header-actions { display: flex; align-items: center; gap: 8px; }
+
+@media (max-width: 600px) {
+    .logo-text { display: none; }
+    /* ensure header actions are visible and compact on small screens */
+    .header-actions { display: flex !important; gap: 8px; }
+    .btn-order { display: none; }
+    #theme-toggle { display: none; }
+    /* show only cart button on mobile header */
+    .cart-btn { display: inline-flex; padding: 8px; }
+
+    /* Move menu toggle and cart next to each other (hamburger then cart) */
+    header { align-items: center; }
+    .logo { order: 0; }
+    /* Place header actions (cart) before the hamburger */
+    .header-actions { order: 1; }
+    .menu-toggle { order: 2; }
+    nav { order: 3; }
+
+    /* Small spacing so buttons don't stick together */
+    .header-actions { margin-right: 8px; }
+    .menu-toggle { margin-left: 0; }
+}
+
 header {
     position: fixed;
     inset: 0 0 auto 0;

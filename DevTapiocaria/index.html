@@ -24,7 +24,7 @@
 <body>
     <a class="skip-link" href="#cardapio">Pular para o cardápio</a>
     <header>
-        <a href="#" class="logo">🥥 DevTapiocaria</a>
+        <a href="#" class="logo"><span class="logo-emoji">🥥</span> <span class="logo-text">DevTapiocaria</span></a>
         <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">
             <span></span>
             <span></span>
@@ -190,10 +190,10 @@
             alt="Nossa cozinha">
         <article>
             <h2>Nossa História</h2>
-            <p>Desde 2020, a Tapiocaria nasceu da paixão por tapiocas artesanais. Nosso segredo? Ingredientes
+            <p>Desde 2020, a Tapiocaria nasceu da paixão por tapiocas. Nosso segredo? Ingredientes
                 selecionados e muito amor em cada preparo.</p>
             <ul>
-                <li>🥥 <strong>Tapioca Fresca</strong> - 100% selecionada</li>
+                <li>🥥 <strong>Tapioca Fresca</strong> - 100% artesanal</li>
                 <li>🚀 <strong>Retirada no local</strong> - Máximo 40 minutos</li>
                 <li>💳 <strong>Pagamento Fácil</strong> - PIX, cartão ou dinheiro</li>
             </ul>
@@ -210,7 +210,7 @@
     <footer id="contato">
         <section>
             <h3>🥥 DevTapiocaria</h3>
-            <p>O melhor tapioca artesanal da cidade.</p>
+            <p>O melhor Tapiocaria da cidade.</p>
         </section>
 
         <section>
@@ -276,6 +276,11 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="client-phone">Telefone (somente números)</label>
+                    <input type="tel" id="client-phone" placeholder="11999999999" pattern="\d{10,11}">
+                </div>
+
+                <div class="form-group">
                     <label>Forma de Entrega</label>
                     <div class="radio-group">
                         <label class="radio-option">
@@ -288,6 +293,23 @@
                         </label>
                     </div>
                 </div>
+
+                    <!-- Confirmation Modal (used for actions like clearing cart) -->
+                    <div id="confirm-modal" class="modal-overlay" aria-hidden="true">
+                        <div class="modal-content" role="dialog" aria-modal="true">
+                            <div class="modal-header">
+                                <h2 id="confirm-modal-title">Confirmar ação</h2>
+                                <button id="confirm-close" class="modal-close">&times;</button>
+                            </div>
+                            <div class="form-group">
+                                <p id="confirm-modal-message">Tem certeza?</p>
+                            </div>
+                            <div style="display:flex; gap:8px; justify-content:flex-end;">
+                                <button id="confirm-cancel" class="btn btn-outline">Cancelar</button>
+                                <button id="confirm-ok" class="btn">Confirmar</button>
+                            </div>
+                        </div>
+                    </div>
 
                 <div id="address-group" class="form-group">
                     <label for="client-address">Endereço de Entrega</label>

@@ -453,23 +453,54 @@ document.addEventListener('DOMContentLoaded', () => {
         saveCart();
         renderCart();
     }
+    // Confirmation modal helper using the DOM (returns a Promise<boolean>)
+    function showConfirm(message) {
+        return new Promise((resolve) => {
+            const modal = document.getElementById('confirm-modal');
+            const msg = document.getElementById('confirm-modal-message');
+            const ok = document.getElementById('confirm-ok');
+            const cancel = document.getElementById('confirm-cancel');
+            const close = document.getElementById('confirm-close');
+
+            if (!modal || !msg || !ok || !cancel) {
+                // Fallback to native confirm if modal not available
+                resolve(confirm(message));
+                return;
+            }
+
+            msg.textContent = message;
+            modal.classList.add('active');
+            modal.setAttribute('aria-hidden', 'false');
+
+            const cleanup = () => {
+                modal.classList.remove('active');
+                modal.setAttribute('aria-hidden', 'true');
+                ok.removeEventListener('click', onOk);
+                cancel.removeEventListener('click', onCancel);
+                close.removeEventListener('click', onCancel);
+            };
+
+            const onOk = () => { cleanup(); resolve(true); };
+            const onCancel = () => { cleanup(); resolve(false); };
+
+            ok.addEventListener('click', onOk);
+            cancel.addEventListener('click', onCancel);
+            if (close) close.addEventListener('click', onCancel);
+        });
+    }
 
     // Clear cart
-    // Clear cart
-    // If `force` is true, skip the confirmation dialog (useful when called programmatically)
-    function clearCart(force = false) {
-        // If not forced, attempt to show a confirmation dialog to the user.
+    // If `force` is true, skip the confirmation modal (useful when called programmatically)
+    async function clearCart(force = false) {
         if (!force) {
-            // If page is not focused or hidden, avoid calling window.confirm (browsers may suppress it)
+            // If page is not focused/visible, avoid showing modal (it may be suppressed)
             if (document.hidden || !document.hasFocus()) {
-                // Fallback: show toast and abort clearing to avoid unexpected behavior
-                showToast('Não foi possível abrir a confirmação porque a página não está ativa.', 'error');
+                showToast('A página não está ativa — ação cancelada.', 'error');
                 return;
             }
 
-            if (!confirm('Tem certeza que deseja limpar o carrinho?')) {
-                return;
-            }
+            const confirmed = await showConfirm('Tem certeza que deseja limpar o carrinho?');
+            if (!confirmed) return;
         }
 
         cart = [];
@@ -549,6 +580,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Validate checkout form
     function validateCheckoutForm() {
         const name = document.getElementById('client-name').value.trim();
+        const phone = document.getElementById('client-phone') ? document.getElementById('client-phone').value.trim() : '';
         const deliveryType = document.querySelector('input[name="delivery-type"]:checked')?.value;
         const address = addressInput.value.trim();
 
@@ -567,6 +599,12 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
 
+        // Validate phone if present (allow optional but warn if invalid)
+        if (phone && !VALIDATION.PHONE.test(phone)) {
+            showToast('Telefone inválido. Informe apenas números (10-11 dígitos).', 'error');
+            return false;
+        }
+
         return true;
     }
 
@@ -579,6 +617,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = document.getElementById('client-name').value.trim();
         const deliveryType = document.querySelector('input[name="delivery-type"]:checked').value;
         const address = addressInput.value.trim();
+        const phone = document.getElementById('client-phone') ? document.getElementById('client-phone').value.trim() : '';
         const payment = paymentSelect.options[paymentSelect.selectedIndex].text;
         const change = changeInput.value.trim();
 
@@ -589,6 +628,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (deliveryType === 'delivery') {
             message += `*Endereço:* ${address}\n`;
+        }
+
+        if (phone) {
+            message += `*Telefone:* ${phone}\n`;
         }
 
         message += `\n*Pedido:*\n`;
