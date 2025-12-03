@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Preconnect to speed up requests to external services -->
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    <link rel="preconnect" href="https://plus.unsplash.com" crossorigin>
+    <link rel="preconnect" href="https://wa.me" crossorigin>
+    <link rel="preconnect" href="https://cdn-icons-png.flaticon.com" crossorigin>
+    <link rel="stylesheet" href="styles.css">
+    <meta name="theme-color" content="#ff6b6b">
+    <!-- Content Security Policy (meta) - adjust sources as needed for deployed environment -->
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src 'self' data: https:; manifest-src 'self'; connect-src 'self' https://wa.me https://images.unsplash.com https://plus.unsplash.com https://cdn-icons-png.flaticon.com; script-src 'self'; style-src 'self' 'unsafe-inline'; font-src 'self' data:;">
+    <!-- Favicon -->
+    <link rel="icon" href="./assets/icons/icon-192.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
+    <link rel="shortcut icon" href="./assets/icons/icon-192.png" type="image/png">
+    <title>DevTapiocaria</title>
+</head>
+
+<body>
+    <a class="skip-link" href="#cardapio">Pular para o cardápio</a>
+    <header>
+        <a href="#" class="logo"><span class="logo-emoji">🥥</span> <span class="logo-text">DevTapiocaria</span></a>
+        <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menu" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <nav id="main-nav">
+            <a href="#">Início</a>
+            <a href="#cardapio">Cardápio</a>
+            <a href="#sobre">Sobre</a>
+            <a href="#contato">Contato</a>
+        </nav>
+        <div class="header-actions">
+            <button id="cart-toggle" class="btn btn-light cart-btn" aria-label="Abrir carrinho">
+                🛒
+                <span id="cart-count" class="cart-badge">0</span>
+            </button>
+            <button id="theme-toggle" class="btn btn-light" aria-pressed="false"
+                aria-label="Alternar tema claro/escuro">🌙</button>
+            <a href="#cardapio" class="btn btn-order">Peça Agora</a>
+        </div>
+    </header>
+
+    <section id="home" class="hero-wrapper">
+        <article class="hero">
+            <div>
+                <h1>A Melhor Tapioca da Cidade</h1>
+                <p>Ingredientes frescos, receitas especiais e entrega rápida. Peça agora e receba em até 40 minutos!</p>
+                <nav class="hero-buttons">
+                    <a href="#cardapio" class="btn">Ver cardápio</a>
+                    <a href="https://wa.me/5583981374944" class="btn btn-outline" target="_blank" rel="noopener">📲
+                        WhatsApp</a>
+                </nav>
+                <ul class="hero-stats">
+                    <li>
+                        <strong>+500</strong>
+                        <span>Clientes felizes</span>
+                    </li>
+                    <li>
+                        <strong>4.9</strong>
+                        Avaliação ⭐
+                    </li>
+                    <li>
+                        <strong>40min</strong>
+                        Ou seu dinheiro de volta
+                    </li>
+
+                </ul>
+            </div>
+
+            <img alt="tapioca"
+                src="https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                srcset="https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=480&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 480w,
+                        https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 800w,
+                        https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 1200w,
+                        https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=1486&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 1486w"
+                sizes="(min-width: 900px) 50vw, 100vw" loading="eager" fetchpriority="high">
+        </article>
+    </section>
+
+    <section id="cardapio" class="cardapio">
+        <h2>Nosso Cardápio</h2>
+        <p>Escolha seu favorito e faça seu pedido pelo WhatsApp</p>
+
+        <div class="menu-filters">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="salgadas">Salgadas</button>
+            <button class="filter-btn" data-filter="doces">Doces</button>
+            <button class="filter-btn" data-filter="bebidas">Bebidas</button>
+        </div>
+
+        <ul class="menu-grid">
+            <li class="menu-item" data-category="salgadas" data-name="Tapioca Clássico" data-price="28.90"
+                data-image="https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=1486&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                <img loading="lazy"
+                    src="https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    srcset="https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=320&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 320w,
+                            https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=640&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 640w,
+                            https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=1200&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 1200w"
+                    sizes="(min-width:900px) 33vw, (min-width:600px) 50vw, 100vw" alt="Tapioca Clássico">
+                <span class="badge">Mais Vendido</span>
+                <h3>Tapioca Clássico</h3>
+                <p>Massa de tapioca, queijo coalho, carne seca desfiada e manteiga de garrafa</p>
+                <strong>R$ 28,90</strong>
+                <button class="btn add-to-cart">Adicionar ao Carrinho</button>
+            </li>
+
+            <li class="menu-item" data-category="salgadas" data-name="Tapioca Bacon" data-price="34.90"
+                data-image="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                <img loading="lazy"
+                    src="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    srcset="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=320&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 320w,
+                            https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=640&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 640w,
+                            https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 870w"
+                    sizes="(min-width:900px) 33vw, (min-width:600px) 50vw, 100vw" alt="Tapioca Bacon">
+                <h3>Tapioca Bacon</h3>
+                <p>Massa de tapioca, bacon crocante, queijo mussarela e cebola caramelizada</p>
+                <strong>R$ 34,90</strong>
+                <button class="btn add-to-cart">Adicionar ao Carrinho</button>
+            </li>
+
+            <li class="menu-item" data-category="salgadas" data-name="Tapioca Dupla" data-price="42.90"
+                data-image="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                <img loading="lazy"
+                    src="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    srcset="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=320&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 320w,
+                            https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=640&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 640w,
+                            https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 870w"
+                    sizes="(min-width:900px) 33vw, (min-width:600px) 50vw, 100vw" alt="Tapioca Dupla">
+                <span class="badge hot">Novidade</span>
+                <h3>Tapioca Dupla</h3>
+                <p>Duas camadas de tapioca, dobro de queijo, carne seca e bacon especial</p>
+                <strong>R$ 42,90</strong>
+                <button class="btn add-to-cart">Adicionar ao Carrinho</button>
+            </li>
+
+            <li class="menu-item" data-category="salgadas" data-name="Tapioca Veggie" data-price="32.90"
+                data-image="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                <img loading="lazy"
+                    src="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    srcset="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=320&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 320w,
+                            https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=640&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 640w,
+                            https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 870w"
+                    sizes="(min-width:900px) 33vw, (min-width:600px) 50vw, 100vw" alt="Tapioca Veggie">
+                <h3>Tapioca Veggie</h3>
+                <p>Massa integral, queijo vegano, rúcula, tomate seco e azeite de ervas</p>
+                <strong>R$ 32,90</strong>
+                <button class="btn add-to-cart">Adicionar ao Carrinho</button>
+            </li>
+
+            <li class="menu-item" data-category="doces" data-name="Tapioca Doce" data-price="18.90"
+                data-image="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                <img loading="lazy"
+                    src="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    srcset="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=320&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 320w,
+                            https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=640&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 640w,
+                            https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 870w"
+                    sizes="(min-width:900px) 33vw, (min-width:600px) 50vw, 100vw" alt="Tapioca Doce">
+                <h3>Tapioca Doce</h3>
+                <p>Tapioca com coco ralado, leite condensado e canela especial</p>
+                <strong>R$ 18,90</strong>
+                <button class="btn add-to-cart">Adicionar ao Carrinho</button>
+            </li>
+
+            <li class="menu-item" data-category="bebidas" data-name="Suco Natural" data-price="16.90"
+                data-image="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+                <img loading="lazy"
+                    src="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=400&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                    srcset="https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=320&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 320w,
+                            https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=640&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 640w,
+                            https://plus.unsplash.com/premium_photo-1725467479101-556af13a7220?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D 870w"
+                    sizes="(min-width:900px) 33vw, (min-width:600px) 50vw, 100vw" alt="Suco Natural">
+                <h3>Tapioca Natural</h3>
+                <p>Suco natural nos sabores: maracujá, acerola, caju ou manga (500ml)</p>
+                <strong>R$ 16,90</strong>
+                <button class="btn add-to-cart">Adicionar ao Carrinho</button>
+            </li>
+        </ul>
+
+    </section>
+
+    <section id="sobre" class="sobre">
+        <img src="https://images.unsplash.com/photo-1676515231566-eb804ac487c1?q=80&w=1486&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            alt="Nossa cozinha">
+        <article>
+            <h2>Nossa História</h2>
+            <p>Desde 2020, a Tapiocaria nasceu da paixão por tapiocas. Nosso segredo? Ingredientes
+                selecionados e muito amor em cada preparo.</p>
+            <ul>
+                <li>🥥 <strong>Tapioca Fresca</strong> - 100% artesanal</li>
+                <li>🚀 <strong>Retirada no local</strong> - Máximo 40 minutos</li>
+                <li>💳 <strong>Pagamento Fácil</strong> - PIX, cartão ou dinheiro</li>
+            </ul>
+        </article>
+
+    </section>
+
+    <section id="cta" class="cta">
+        <h2>Bateu a Fome?</h2>
+        <p>Faça seu pedido agora e receba em casa!</p>
+        <a href="https://wa.me/5583981374944" class="btn btn-light">📲 Pedir pelo WhatsApp</a>
+    </section>
+
+    <footer id="contato">
+        <section>
+            <h3>🥥 DevTapiocaria</h3>
+            <p>O melhor Tapiocaria da cidade.</p>
+        </section>
+
+        <section>
+            <h4>Horário</h4>
+            <p>Terça a Domingo 18h às 23h</p>
+        </section>
+
+        <section>
+            <h4>Contato</h4>
+            <p>📱 (11) 99999-9999
+                📍 Rua das Tapiocas, 123</p>
+        </section>
+
+        <section>
+            <h4>Redes Sociais</h4>
+            <p>Instagram</p>
+        </section>
+
+        <div class="copy">
+            <p>© 2025 - DevTapiocaria</p>
+        </div>
+    </footer>
+
+    <!-- Cart Overlay -->
+    <div id="cart-overlay" class="cart-overlay"></div>
+
+    <!-- Cart Sidebar -->
+    <aside id="cart-sidebar" class="cart-sidebar">
+        <div class="cart-header">
+            <h2 tabindex="-1">🛒 Seu Carrinho</h2>
+            <button id="cart-close" class="cart-close" aria-label="Fechar carrinho">&times;</button>
+        </div>
+
+        <div class="cart-body">
+            <div id="cart-empty" class="cart-empty">
+                <p>🛒 Seu carrinho está vazio</p>
+                <p class="cart-empty-subtitle">Adicione itens deliciosos do nosso cardápio!</p>
+            </div>
+            <ul id="cart-items" class="cart-items"></ul>
+        </div>
+
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <strong id="cart-total-price">R$ 0,00</strong>
+            </div>
+            <button id="clear-cart" class="btn btn-outline">Limpar Carrinho</button>
+            <button id="checkout-btn" class="btn">Finalizar Pedido</button>
+        </div>
+    </aside>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Finalizar Pedido</h2>
+                <button id="close-modal" class="modal-close">&times;</button>
+            </div>
+            <form id="checkout-form">
+                <div class="form-group">
+                    <label for="client-name">Seu Nome</label>
+                    <input type="text" id="client-name" required placeholder="Digite seu nome">
+                </div>
+
+                <div class="form-group">
+                    <label for="client-phone">Telefone (somente números)</label>
+                    <input type="tel" id="client-phone" placeholder="11999999999" pattern="\d{10,11}">
+                </div>
+
+                <div class="form-group">
+                    <label>Forma de Entrega</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="delivery-type" value="delivery" checked>
+                            <span>Entrega 🛵</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="delivery-type" value="pickup">
+                            <span>Retirada 🏃</span>
+                        </label>
+                    </div>
+                </div>
+
+                    <!-- Confirmation Modal (used for actions like clearing cart) -->
+                    <div id="confirm-modal" class="modal-overlay" aria-hidden="true">
+                        <div class="modal-content" role="dialog" aria-modal="true">
+                            <div class="modal-header">
+                                <h2 id="confirm-modal-title">Confirmar ação</h2>
+                                <button id="confirm-close" class="modal-close">&times;</button>
+                            </div>
+                            <div class="form-group">
+                                <p id="confirm-modal-message">Tem certeza?</p>
+                            </div>
+                            <div style="display:flex; gap:8px; justify-content:flex-end;">
+                                <button id="confirm-cancel" class="btn btn-outline">Cancelar</button>
+                                <button id="confirm-ok" class="btn">Confirmar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                <div id="address-group" class="form-group">
+                    <label for="client-address">Endereço de Entrega</label>
+                    <textarea id="client-address" rows="2" placeholder="Rua, número, complemento..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="payment-method">Forma de Pagamento</label>
+                    <select id="payment-method" required>
+                        <option value="" disabled selected>Selecione...</option>
+                        <option value="pix">PIX</option>
+                        <option value="card">Cartão (Maquininha)</option>
+                        <option value="cash">Dinheiro</option>
+                    </select>
+                </div>
+
+                <div id="change-group" class="form-group hidden">
+                    <label for="client-change">Troco para quanto?</label>
+                    <input type="text" id="client-change" placeholder="R$ 0,00">
+                </div>
+
+                <button type="submit" class="btn btn-full">Enviar Pedido no WhatsApp 📲</button>
+            </form>
+        </div>
+    </div>
+
+    <link rel="manifest" href="manifest.json">
+    <script src="script.js"></script>
+</body>
+
+</html>
