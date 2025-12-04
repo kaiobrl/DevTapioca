@@ -1,0 +1,14 @@
+{
+  "name": "devtapioca",
+  "version": "1.0.0",
+  "description": "Site PWA para uma tapiocaria - DevTapioca",
+  "scripts": {
+    "build": "npm run build:js && npm run build:css",
+    "build:js": "esbuild script.js --minify --bundle --outfile=dist/script.min.js --platform=browser",
+    "build:css": "cleancss -o dist/styles.min.css styles.css"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.0",
+    "clean-css-cli": "^5.0.0"
+  }
+}
