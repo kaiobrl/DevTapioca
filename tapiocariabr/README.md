@@ -15,13 +15,31 @@ Site responsivo e PWA (Progressive Web App) para uma tapiocaria artesanal. Proje
 - Confirmação acessível: modal de confirmação em DOM (substitui `window.confirm`).
 
 ## Melhorias implementadas (segurança e performance)
+
+### Segurança
 - Reescrita das notificações (toasts) para prevenir XSS (removem tags HTML e usam `textContent`).
-- Validação do checkout: nome, endereço (se entrega) e telefone (10-11 dígitos).
+- Validação robusta do checkout: nome, endereço (se entrega) e telefone brasileiro (DDD + número).
 - Substituição de `confirm()` por modal de confirmação acessível (melhora UX e evita supressão de diálogos em abas inativas).
 - Proteção de `localStorage` com getters/setters seguros (tratamento de JSON inválido / quota).
-- Otimização de render do carrinho usando `DocumentFragment` e event delegation.
 - CSP (meta) adicionada ao `index.html` para bloquear fontes não permitidas (recomenda-se aplicar header HTTP em produção).
-- Service Worker: versão atualizada (`tapioca-v3`) e limpeza de caches antigos no `activate`.
+
+### Performance e Código
+- Otimização de render do carrinho usando `DocumentFragment` e event delegation.
+- Refatoração da função `renderCart()` em funções menores e mais manuteníveis.
+- Service Worker: versionamento automático (`APP_VERSION`) e limpeza de caches antigos no `activate`.
+- Logging melhorado no Service Worker para facilitar debug.
+- Tratamento de erros aprimorado com try/catch e feedback ao usuário.
+
+### Validações
+- **Telefone brasileiro**: Validação de DDD (11-99) e formato (10-11 dígitos) com máscara automática.
+- **Endereço**: Validação mais específica (mínimo 10 caracteres, aceita letras, números e caracteres comuns).
+- **Valor monetário**: Validação robusta do campo de troco com normalização de formato.
+
+### UX
+- Máscara automática de telefone no input (formatação enquanto digita).
+- Feedback de foco nos campos com erro durante validação.
+- Detecção de atualizações do Service Worker com notificação ao usuário.
+- Tratamento de erros globais com mensagens amigáveis.
 
 ## Arquivos principais
 - `index.html` — estrutura e markup (agora contém modal de confirmação e campo de telefone no checkout).

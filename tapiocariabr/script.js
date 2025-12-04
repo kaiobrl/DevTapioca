@@ -9,9 +9,16 @@ const CONFIG = {
 
 const VALIDATION = {
     NAME: /^[a-záàâãéèêíïóôõöúçñ\s]{2,50}$/i,
-    ADDRESS: /^.{5,100}$/,
-    PHONE: /^\d{10,11}$/,
-    EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    // Endereço: mínimo 10 caracteres, aceita letras, números, vírgulas, pontos, hífens e espaços
+    ADDRESS: /^[a-záàâãéèêíïóôõöúçñ0-9\s,.\-]{10,200}$/i,
+    // Telefone brasileiro: (XX) XXXXX-XXXX ou (XX) XXXX-XXXX (com ou sem DDD)
+    // Aceita também apenas números: 10 ou 11 dígitos (com DDD) ou 8 ou 9 dígitos (sem DDD)
+    PHONE: /^(?:\+55\s?)?(?:\(?\d{2}\)?\s?)?(?:9\s?)?\d{4}[\s-]?\d{4}$/,
+    // Telefone apenas números (para validação após remoção de formatação)
+    PHONE_NUMBERS_ONLY: /^\d{10,11}$/,
+    EMAIL: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    // Valor monetário: aceita R$, pontos, vírgulas e números
+    MONEY: /^R?\$?\s?(\d{1,3}(?:\.\d{3})*(?:,\d{2})?|\d+(?:,\d{2})?)$/
 };
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -289,90 +296,67 @@ document.addEventListener('DOMContentLoaded', () => {
         setSafeStorage(CONFIG.CART_STORAGE_KEY, cart);
     }
 
-    // Render cart items (optimized)
-    function renderCart() {
-        if (cart.length === 0) {
-            cartEmpty.style.display = 'block';
-            cartItems.style.display = 'none';
-            cartTotalPrice.textContent = formatPrice(0);
-            updateCartCount();
-            // clean any previous delegated handler
-            if (cartItems._handler) {
-                cartItems.removeEventListener('click', cartItems._handler);
-                cartItems._handler = null;
-            }
-            cartItems.innerHTML = '';
-            return;
-        }
+    // Helper: Create cart item element
+    function createCartItemElement(item, index) {
+        const li = document.createElement('li');
+        li.className = 'cart-item';
 
-        cartEmpty.style.display = 'none';
-        cartItems.style.display = 'block';
+        const img = document.createElement('img');
+        img.src = item.image;
+        img.alt = item.name;
 
-        // Build items using DocumentFragment to reduce reflows
-        const fragment = document.createDocumentFragment();
+        const details = document.createElement('div');
+        details.className = 'cart-item-details';
 
-        cart.forEach((item, index) => {
-            const li = document.createElement('li');
-            li.className = 'cart-item';
+        const h4 = document.createElement('h4');
+        h4.textContent = item.name;
 
-            const img = document.createElement('img');
-            img.src = item.image;
-            img.alt = item.name;
+        const price = document.createElement('p');
+        price.className = 'cart-item-price';
+        price.textContent = formatPrice(item.price);
 
-            const details = document.createElement('div');
-            details.className = 'cart-item-details';
+        details.appendChild(h4);
+        details.appendChild(price);
 
-            const h4 = document.createElement('h4');
-            h4.textContent = item.name;
+        const controls = document.createElement('div');
+        controls.className = 'cart-item-controls';
 
-            const price = document.createElement('p');
-            price.className = 'cart-item-price';
-            price.textContent = formatPrice(item.price);
+        const minusBtn = document.createElement('button');
+        minusBtn.className = 'qty-btn qty-minus';
+        minusBtn.dataset.index = index;
+        minusBtn.setAttribute('aria-label', 'Diminuir quantidade');
+        minusBtn.textContent = '−';
 
-            details.appendChild(h4);
-            details.appendChild(price);
+        const qtyDisplay = document.createElement('span');
+        qtyDisplay.className = 'qty-display';
+        qtyDisplay.textContent = item.quantity;
 
-            const controls = document.createElement('div');
-            controls.className = 'cart-item-controls';
+        const plusBtn = document.createElement('button');
+        plusBtn.className = 'qty-btn qty-plus';
+        plusBtn.dataset.index = index;
+        plusBtn.setAttribute('aria-label', 'Aumentar quantidade');
+        plusBtn.textContent = '+';
 
-            const minusBtn = document.createElement('button');
-            minusBtn.className = 'qty-btn qty-minus';
-            minusBtn.dataset.index = index;
-            minusBtn.setAttribute('aria-label', 'Diminuir quantidade');
-            minusBtn.textContent = '−';
+        controls.appendChild(minusBtn);
+        controls.appendChild(qtyDisplay);
+        controls.appendChild(plusBtn);
 
-            const qtyDisplay = document.createElement('span');
-            qtyDisplay.className = 'qty-display';
-            qtyDisplay.textContent = item.quantity;
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'cart-item-remove';
+        removeBtn.dataset.index = index;
+        removeBtn.setAttribute('aria-label', 'Remover item');
+        removeBtn.textContent = '🗑️';
 
-            const plusBtn = document.createElement('button');
-            plusBtn.className = 'qty-btn qty-plus';
-            plusBtn.dataset.index = index;
-            plusBtn.setAttribute('aria-label', 'Aumentar quantidade');
-            plusBtn.textContent = '+';
+        li.appendChild(img);
+        li.appendChild(details);
+        li.appendChild(controls);
+        li.appendChild(removeBtn);
 
-            controls.appendChild(minusBtn);
-            controls.appendChild(qtyDisplay);
-            controls.appendChild(plusBtn);
+        return li;
+    }
 
-            const removeBtn = document.createElement('button');
-            removeBtn.className = 'cart-item-remove';
-            removeBtn.dataset.index = index;
-            removeBtn.setAttribute('aria-label', 'Remover item');
-            removeBtn.textContent = '🗑️';
-
-            li.appendChild(img);
-            li.appendChild(details);
-            li.appendChild(controls);
-            li.appendChild(removeBtn);
-
-            fragment.appendChild(li);
-        });
-
-        cartItems.innerHTML = '';
-        cartItems.appendChild(fragment);
-
-        // Delegated handler for cart controls (attach once)
+    // Helper: Setup cart item event handlers
+    function setupCartItemHandlers() {
         if (cartItems._handler) {
             cartItems.removeEventListener('click', cartItems._handler);
         }
@@ -389,6 +373,41 @@ document.addEventListener('DOMContentLoaded', () => {
         };
 
         cartItems.addEventListener('click', cartItems._handler);
+    }
+
+    // Helper: Render empty cart state
+    function renderEmptyCart() {
+        cartEmpty.style.display = 'block';
+        cartItems.style.display = 'none';
+        cartTotalPrice.textContent = formatPrice(0);
+        updateCartCount();
+        if (cartItems._handler) {
+            cartItems.removeEventListener('click', cartItems._handler);
+            cartItems._handler = null;
+        }
+        cartItems.innerHTML = '';
+    }
+
+    // Render cart items (optimized and refactored)
+    function renderCart() {
+        if (cart.length === 0) {
+            renderEmptyCart();
+            return;
+        }
+
+        cartEmpty.style.display = 'none';
+        cartItems.style.display = 'block';
+
+        // Build items using DocumentFragment to reduce reflows
+        const fragment = document.createDocumentFragment();
+        cart.forEach((item, index) => {
+            fragment.appendChild(createCartItemElement(item, index));
+        });
+
+        cartItems.innerHTML = '';
+        cartItems.appendChild(fragment);
+
+        setupCartItemHandlers();
 
         cartTotalPrice.textContent = formatPrice(calculateTotal());
         updateCartCount();
@@ -396,61 +415,117 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Add item to cart
     function addToCart(name, price, image) {
-        // Basic validation
-        if (!name || !price || Number.isNaN(Number(price))) {
-            showToast('Erro ao adicionar item: dados inválidos.', 'error');
-            return;
-        }
-
-        const numericPrice = parseFloat(price);
-        const existingItem = cart.find(item => item.name === name);
-
-        if (existingItem) {
-            if (existingItem.quantity < CONFIG.MAX_CART_ITEMS) {
-                existingItem.quantity += 1;
-                showToast(`Mais uma unidade de ${name} adicionada!`);
-            } else {
-                showToast(`Limite de ${CONFIG.MAX_CART_ITEMS} unidades atingido.`, 'error');
+        try {
+            // Basic validation
+            if (!name || name.trim().length === 0) {
+                showToast('Erro: nome do item inválido.', 'error');
                 return;
             }
-        } else {
-            cart.push({ name: String(name), price: numericPrice, image: String(image), quantity: 1 });
-            showToast(`${name} adicionado ao carrinho!`);
-        }
 
-        saveCart();
-        renderCart();
+            if (!price || Number.isNaN(Number(price))) {
+                showToast('Erro: preço inválido.', 'error');
+                return;
+            }
+
+            const numericPrice = parseFloat(price);
+            if (numericPrice <= 0) {
+                showToast('Erro: preço deve ser maior que zero.', 'error');
+                return;
+            }
+
+            if (!image || typeof image !== 'string') {
+                showToast('Erro: imagem do item inválida.', 'error');
+                return;
+            }
+
+            const existingItem = cart.find(item => item.name === name);
+
+            if (existingItem) {
+                if (existingItem.quantity < CONFIG.MAX_CART_ITEMS) {
+                    existingItem.quantity += 1;
+                    showToast(`Mais uma unidade de ${name} adicionada!`);
+                } else {
+                    showToast(`Limite de ${CONFIG.MAX_CART_ITEMS} unidades atingido para este item.`, 'error');
+                    return;
+                }
+            } else {
+                cart.push({ 
+                    name: String(name).trim(), 
+                    price: numericPrice, 
+                    image: String(image), 
+                    quantity: 1 
+                });
+                showToast(`${name} adicionado ao carrinho!`);
+            }
+
+            saveCart();
+            renderCart();
+        } catch (error) {
+            console.error('[App] Erro ao adicionar item ao carrinho:', error);
+            showToast('Erro ao adicionar item. Tente novamente.', 'error');
+        }
     }
 
     // Remove item from cart
     function removeItem(index) {
-        const item = cart[index];
-        cart.splice(index, 1);
-        saveCart();
-        renderCart();
-        showToast(`${item.name} removido do carrinho.`, 'error');
+        try {
+            if (index < 0 || index >= cart.length) {
+                console.warn('[App] Tentativa de remover item com índice inválido:', index);
+                return;
+            }
+
+            const item = cart[index];
+            cart.splice(index, 1);
+            
+            saveCart();
+            renderCart();
+            showToast(`${item.name} removido do carrinho.`, 'error');
+        } catch (error) {
+            console.error('[App] Erro ao remover item do carrinho:', error);
+            showToast('Erro ao remover item. Tente novamente.', 'error');
+        }
     }
 
     // Increase quantity
     function increaseQuantity(index) {
-        if (!cart[index]) return;
-        if (cart[index].quantity < CONFIG.MAX_CART_ITEMS) {
-            cart[index].quantity += 1;
-            saveCart();
-            renderCart();
+        try {
+            if (!cart[index]) {
+                console.warn('[App] Tentativa de aumentar quantidade de item inexistente:', index);
+                return;
+            }
+            
+            if (cart[index].quantity < CONFIG.MAX_CART_ITEMS) {
+                cart[index].quantity += 1;
+                saveCart();
+                renderCart();
+            } else {
+                showToast(`Limite de ${CONFIG.MAX_CART_ITEMS} unidades atingido.`, 'error');
+            }
+        } catch (error) {
+            console.error('[App] Erro ao aumentar quantidade:', error);
+            showToast('Erro ao atualizar quantidade. Tente novamente.', 'error');
         }
     }
 
     // Decrease quantity
     function decreaseQuantity(index) {
-        if (cart[index].quantity > 1) {
-            cart[index].quantity--;
-        } else {
-            removeItem(index);
-            return;
+        try {
+            if (!cart[index]) {
+                console.warn('[App] Tentativa de diminuir quantidade de item inexistente:', index);
+                return;
+            }
+
+            if (cart[index].quantity > 1) {
+                cart[index].quantity--;
+                saveCart();
+                renderCart();
+            } else {
+                removeItem(index);
+            }
+        } catch (error) {
+            console.error('[App] Erro ao diminuir quantidade:', error);
+            showToast('Erro ao atualizar quantidade. Tente novamente.', 'error');
         }
-        saveCart();
-        renderCart();
     }
     // Confirmation modal helper using the DOM (returns a Promise<boolean>)
     function showConfirm(message) {
@@ -576,35 +651,176 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Helper: Remove phone formatting (keep only numbers)
+    function normalizePhone(phone) {
+        return phone.replace(/\D/g, '');
+    }
+
+    // Helper: Format phone number for display
+    function formatPhone(phone) {
+        const numbers = normalizePhone(phone);
+        if (numbers.length === 11) {
+            return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
+        } else if (numbers.length === 10) {
+            return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 6)}-${numbers.slice(6)}`;
+        }
+        return phone;
+    }
+
+    // Helper: Validate phone number (Brazilian format)
+    function validatePhone(phone) {
+        if (!phone) return { valid: true, message: '' }; // Phone is optional
+        
+        const normalized = normalizePhone(phone);
+        
+        // Must have 10 or 11 digits (with DDD)
+        if (!VALIDATION.PHONE_NUMBERS_ONLY.test(normalized)) {
+            return {
+                valid: false,
+                message: 'Telefone inválido. Informe 10 ou 11 dígitos (com DDD).'
+            };
+        }
+
+        // Check if DDD is valid (11-99, excluding some invalid ranges)
+        const ddd = parseInt(normalized.slice(0, 2), 10);
+        if (ddd < 11 || ddd > 99 || (ddd >= 20 && ddd <= 29)) {
+            return {
+                valid: false,
+                message: 'DDD inválido. Use um DDD válido do Brasil.'
+            };
+        }
+
+        return { valid: true, message: '' };
+    }
+
+    // Helper: Validate money value
+    function validateMoney(value) {
+        if (!value) return { valid: true, message: '', normalized: '' };
+        
+        // Remove currency symbols and spaces
+        const cleaned = value.replace(/R?\$?\s*/g, '').trim();
+        
+        // Replace comma with dot for parsing
+        const normalized = cleaned.replace(',', '.');
+        const numValue = parseFloat(normalized);
+        
+        if (isNaN(numValue) || numValue <= 0) {
+            return {
+                valid: false,
+                message: 'Valor inválido. Informe um valor numérico maior que zero.',
+                normalized: ''
+            };
+        }
+
+        return {
+            valid: true,
+            message: '',
+            normalized: numValue.toFixed(2).replace('.', ',')
+        };
+    }
+
     // Validate checkout form
     function validateCheckoutForm() {
         const name = document.getElementById('client-name').value.trim();
-        const phone = document.getElementById('client-phone') ? document.getElementById('client-phone').value.trim() : '';
+        const phoneInput = document.getElementById('client-phone');
+        const phone = phoneInput ? phoneInput.value.trim() : '';
         const deliveryType = document.querySelector('input[name="delivery-type"]:checked')?.value;
         const address = addressInput.value.trim();
 
+        // Validate name
         if (!VALIDATION.NAME.test(name)) {
-            showToast('Nome inválido. Use 2-50 caracteres.', 'error');
+            showToast('Nome inválido. Use 2-50 caracteres, apenas letras e espaços.', 'error');
+            document.getElementById('client-name').focus();
             return false;
         }
 
+        // Validate delivery type
         if (!deliveryType) {
             showToast('Selecione o tipo de entrega.', 'error');
             return false;
         }
 
-        if (deliveryType === 'delivery' && !VALIDATION.ADDRESS.test(address)) {
-            showToast('Endereço inválido. Informe corretamente.', 'error');
-            return false;
+        // Validate address for delivery
+        if (deliveryType === 'delivery') {
+            if (!address) {
+                showToast('Endereço é obrigatório para entrega.', 'error');
+                addressInput.focus();
+                return false;
+            }
+            if (!VALIDATION.ADDRESS.test(address)) {
+                showToast('Endereço inválido. Informe pelo menos 10 caracteres com rua, número e complemento.', 'error');
+                addressInput.focus();
+                return false;
+            }
         }
 
-        // Validate phone if present (allow optional but warn if invalid)
-        if (phone && !VALIDATION.PHONE.test(phone)) {
-            showToast('Telefone inválido. Informe apenas números (10-11 dígitos).', 'error');
+        // Validate phone
+        const phoneValidation = validatePhone(phone);
+        if (!phoneValidation.valid) {
+            showToast(phoneValidation.message, 'error');
+            if (phoneInput) phoneInput.focus();
             return false;
         }
 
         return true;
+    }
+
+    // Add phone mask to phone input
+    const phoneInput = document.getElementById('client-phone');
+    if (phoneInput) {
+        // Remove HTML5 validation to avoid conflict with JavaScript mask
+        phoneInput.removeAttribute('pattern');
+        phoneInput.setAttribute('autocomplete', 'tel');
+        
+        phoneInput.addEventListener('input', function(e) {
+            const cursorPosition = e.target.selectionStart;
+            let value = normalizePhone(e.target.value);
+            
+            // Limit to 11 digits
+            if (value.length > 11) {
+                value = value.slice(0, 11);
+            }
+            
+            // Format as user types
+            if (value.length > 0) {
+                const formatted = formatPhone(value);
+                e.target.value = formatted;
+                
+                // Restore cursor position (adjust for added formatting characters)
+                const newCursorPos = Math.min(cursorPosition + (formatted.length - e.target.value.length), formatted.length);
+                e.target.setSelectionRange(newCursorPos, newCursorPos);
+            } else {
+                e.target.value = '';
+            }
+        });
+
+        // Allow paste and format
+        phoneInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const value = normalizePhone(pastedText);
+            if (value.length > 0) {
+                const limitedValue = value.slice(0, 11);
+                e.target.value = formatPhone(limitedValue);
+            }
+        });
+
+        // Allow only numbers and common editing keys
+        phoneInput.addEventListener('keydown', function(e) {
+            // Allow: backspace, delete, tab, escape, enter, home, end, left, right
+            if ([8, 9, 27, 13, 46, 35, 36, 37, 39].indexOf(e.keyCode) !== -1 ||
+                // Allow Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+                (e.keyCode === 65 && e.ctrlKey === true) ||
+                (e.keyCode === 67 && e.ctrlKey === true) ||
+                (e.keyCode === 86 && e.ctrlKey === true) ||
+                (e.keyCode === 88 && e.ctrlKey === true)) {
+                return;
+            }
+            // Ensure that it is a number
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        });
     }
 
     // Handle Form Submission
@@ -616,9 +832,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = document.getElementById('client-name').value.trim();
         const deliveryType = document.querySelector('input[name="delivery-type"]:checked').value;
         const address = addressInput.value.trim();
-        const phone = document.getElementById('client-phone') ? document.getElementById('client-phone').value.trim() : '';
+        const phoneInput = document.getElementById('client-phone');
+        const phone = phoneInput ? normalizePhone(phoneInput.value.trim()) : '';
         const payment = paymentSelect.options[paymentSelect.selectedIndex].text;
-        const change = changeInput.value.trim();
+        const changeRaw = changeInput.value.trim();
+
+        // Validate and format change value
+        const changeValidation = validateMoney(changeRaw);
+        const change = changeValidation.valid ? changeValidation.normalized : '';
 
         // Build message safely
         let message = `Olá! Gostaria de fazer o seguinte pedido:\n\n`;
@@ -630,7 +851,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (phone) {
-            message += `*Telefone:* ${phone}\n`;
+            message += `*Telefone:* ${formatPhone(phone)}\n`;
         }
 
         message += `\n*Pedido:*\n`;
@@ -642,16 +863,22 @@ document.addEventListener('DOMContentLoaded', () => {
         message += `\n*Total: ${formatPrice(calculateTotal())}*\n`;
         message += `*Pagamento:* ${payment}\n`;
 
-        if (change && /^\d+[.,]?\d*$/.test(change)) {
+        if (change) {
             message += `*Troco para:* R$ ${change}\n`;
         }
 
-        const whatsappUrl = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-        window.open(whatsappUrl, '_blank');
-
-        closeCheckoutModal();
-        // Clear without confirmation because this action follows an explicit user submit and may open a new tab
-        clearCart(true); // Optional: clear cart after successful order
+        try {
+            const whatsappUrl = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+            
+            showToast('Pedido enviado! Verifique o WhatsApp.', 'success');
+            closeCheckoutModal();
+            // Clear without confirmation because this action follows an explicit user submit
+            clearCart(true);
+        } catch (error) {
+            console.error('Erro ao abrir WhatsApp:', error);
+            showToast('Erro ao abrir WhatsApp. Tente novamente.', 'error');
+        }
     });
 
     // Event listeners
@@ -713,8 +940,45 @@ document.addEventListener('DOMContentLoaded', () => {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
             navigator.serviceWorker.register('./sw.js')
-                .then(registration => console.log('SW registrado com sucesso:', registration.scope))
-                .catch(err => console.warn('Falha ao registrar SW:', err));
+                .then((registration) => {
+                    console.log('[App] Service Worker registrado com sucesso:', registration.scope);
+                    
+                    // Check for updates
+                    registration.addEventListener('updatefound', () => {
+                        const newWorker = registration.installing;
+                        if (newWorker) {
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    // New service worker available
+                                    console.log('[App] Nova versão do Service Worker disponível');
+                                    showToast('Nova versão disponível! Recarregue a página para atualizar.', 'success');
+                                }
+                            });
+                        }
+                    });
+                })
+                .catch((err) => {
+                    console.error('[App] Falha ao registrar Service Worker:', err);
+                    // Don't show error to user unless critical
+                    // showToast('Algumas funcionalidades offline podem não funcionar.', 'error');
+                });
         });
+    } else {
+        console.warn('[App] Service Worker não suportado neste navegador');
     }
+
+    // Global error handler for unhandled errors
+    window.addEventListener('error', (event) => {
+        console.error('[App] Erro não tratado:', event.error);
+        // Optionally show user-friendly message
+        if (event.error && !event.error.handled) {
+            showToast('Ocorreu um erro inesperado. Tente recarregar a página.', 'error');
+        }
+    });
+
+    // Handle unhandled promise rejections
+    window.addEventListener('unhandledrejection', (event) => {
+        console.error('[App] Promise rejeitada não tratada:', event.reason);
+        event.preventDefault(); // Prevent default browser error logging
+    });
 });
