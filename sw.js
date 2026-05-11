@@ -80,7 +80,7 @@ async function handleNavigationRequest(event) {
         // Network failed — try cache then offline fallback
         const cached = await caches.match(event.request);
         if (cached) return cached;
-        return caches.match('./offline.html');
+        return await caches.match('./offline.html') || new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
     }
 }
 
@@ -132,8 +132,8 @@ self.addEventListener('fetch', (event) => {
                     trimCache(RUNTIME_IMAGE_CACHE, MAX_IMAGE_CACHE_SIZE).catch(() => {});
                     return response;
                 } catch (err) {
-                    // fallback to precached offline image or offline.html if missing
-                    return caches.match('./offline.html');
+                    // fallback to precached offline page or a response object when images fail
+                    return await caches.match('./offline.html') || new Response('Offline', { status: 503, statusText: 'Service Unavailable' });
                 }
             })
         );
@@ -147,7 +147,7 @@ self.addEventListener('fetch', (event) => {
                 // update cache
                 caches.open(CACHE_NAME).then((cache) => cache.put(request, networkResponse.clone()));
                 return networkResponse;
-            }).catch(() => null);
+            }).catch(() => caches.match('./offline.html'));
             // prefer cached response if available, otherwise network
             return cached || fetchPromise;
         })

@@ -938,31 +938,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Register service worker from external script (avoids inline script for CSP)
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js')
-                .then((registration) => {
-                    console.log('[App] Service Worker registrado com sucesso:', registration.scope);
-                    
-                    // Check for updates
-                    registration.addEventListener('updatefound', () => {
-                        const newWorker = registration.installing;
-                        if (newWorker) {
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    // New service worker available
-                                    console.log('[App] Nova versão do Service Worker disponível');
-                                    showToast('Nova versão disponível! Recarregue a página para atualizar.', 'success');
-                                }
-                            });
-                        }
+        const isSecureContext = location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.hostname === '[::1]';
+        if (isSecureContext) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then((registration) => {
+                        console.log('[App] Service Worker registrado com sucesso:', registration.scope);
+                        
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            if (newWorker) {
+                                newWorker.addEventListener('statechange', () => {
+                                    if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                        // New service worker available
+                                        console.log('[App] Nova versão do Service Worker disponível');
+                                        showToast('Nova versão disponível! Recarregue a página para atualizar.', 'success');
+                                    }
+                                });
+                            }
+                        });
+                    })
+                    .catch((err) => {
+                        console.error('[App] Falha ao registrar Service Worker:', err);
+                        // Don't show error to user unless critical
+                        // showToast('Algumas funcionalidades offline podem não funcionar.', 'error');
                     });
-                })
-                .catch((err) => {
-                    console.error('[App] Falha ao registrar Service Worker:', err);
-                    // Don't show error to user unless critical
-                    // showToast('Algumas funcionalidades offline podem não funcionar.', 'error');
-                });
-        });
+            });
+        } else {
+            console.warn('[App] Service Worker não registrado porque o protocolo atual não é compatível:', location.protocol, location.origin);
+        }
     } else {
         console.warn('[App] Service Worker não suportado neste navegador');
     }

@@ -180,8 +180,8 @@ textarea:focus-visible {
     /* Move menu toggle and cart next to each other (hamburger then cart) */
     header { align-items: center; }
     .logo { order: 0; }
-    /* Place header actions (cart) before the hamburger */
-    .header-actions { order: 1; }
+    /* Place cart and hamburger together on the right side */
+    .header-actions { order: 1; margin-left: auto; }
     .menu-toggle { order: 2; }
     nav { order: 3; }
 
@@ -191,7 +191,6 @@ textarea:focus-visible {
 }
 
 header {
-    position: fixed;
     inset: 0 0 auto 0;
     display: flex;
     align-items: center;
@@ -271,7 +270,9 @@ header nav a:hover {
 
 /* Header Actions (Theme + Order button) */
 .header-actions {
-    display: none;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 #theme-toggle {
