@@ -72,9 +72,11 @@ self.addEventListener('activate', (event) => {
 async function handleNavigationRequest(event) {
     try {
         const networkResponse = await fetch(event.request);
+        // clone synchronously before any async operations
+        const responseToCache = networkResponse.clone();
         // update the cache with the latest HTML
         const cache = await caches.open(CACHE_NAME);
-        cache.put(event.request, networkResponse.clone()).catch(() => {});
+        cache.put(event.request, responseToCache).catch(() => {});
         return networkResponse;
     } catch (err) {
         // Network failed — try cache then offline fallback
@@ -124,8 +126,9 @@ self.addEventListener('fetch', (event) => {
                 if (cached) return cached;
                 try {
                     const response = await fetch(request);
+                    const responseToCache = response.clone();
                     // put a copy in the runtime cache
-                    cache.put(request, response.clone()).catch((err) => {
+                    cache.put(request, responseToCache).catch((err) => {
                         console.warn('[SW] Failed to cache image:', request.url, err);
                     });
                     // keep cache bounded (do not await to speed response)
@@ -144,8 +147,10 @@ self.addEventListener('fetch', (event) => {
     event.respondWith(
         caches.match(request).then((cached) => {
             const fetchPromise = fetch(request).then((networkResponse) => {
+                // clone synchronously before any async operations
+                const responseToCache = networkResponse.clone();
                 // update cache
-                caches.open(CACHE_NAME).then((cache) => cache.put(request, networkResponse.clone()));
+                caches.open(CACHE_NAME).then((cache) => cache.put(request, responseToCache));
                 return networkResponse;
             }).catch(() => caches.match('./offline.html'));
             // prefer cached response if available, otherwise network
