@@ -1,6 +1,6 @@
 // Configuration and validation
 const CONFIG = {
-    WHATSAPP_NUMBER: '5583981374944',
+    WHATSAPP_NUMBER: '5583999578485',//(83) 99957-8485
     CART_STORAGE_KEY: 'cart',
     THEME_STORAGE_KEY: 'theme',
     MAX_CART_ITEMS: 99,
@@ -656,32 +656,38 @@ document.addEventListener('DOMContentLoaded', () => {
         return phone.replace(/\D/g, '');
     }
 
-    // Helper: Format phone number for display
+    // Helper: Format phone number for display (progressive formatting)
     function formatPhone(phone) {
-        const numbers = normalizePhone(phone);
-        if (numbers.length === 11) {
-            return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 7)}-${numbers.slice(7)}`;
-        } else if (numbers.length === 10) {
-            return `(${numbers.slice(0, 2)}) ${numbers.slice(2, 6)}-${numbers.slice(6)}`;
+        const n = normalizePhone(phone);
+        if (n.length === 0) return '';
+        // Build format progressively: (XX) XXXXX-XXXX or (XX) XXXX-XXXX
+        let result = '';
+        if (n.length <= 2) {
+            result = '(' + n;
+        } else if (n.length <= 7) {
+            result = '(' + n.slice(0, 2) + ') ' + n.slice(2);
+        } else if (n.length <= 10) {
+            result = '(' + n.slice(0, 2) + ') ' + n.slice(2, 6) + '-' + n.slice(6);
+        } else {
+            result = '(' + n.slice(0, 2) + ') ' + n.slice(2, 7) + '-' + n.slice(7, 11);
         }
-        return phone;
+        return result;
     }
 
     // Helper: Validate phone number (Brazilian format)
     function validatePhone(phone) {
-        if (!phone) return { valid: true, message: '' }; // Phone is optional
-        
+        // Phone is mandatory; if empty, return invalid
+        if (!phone) return { valid: false, message: 'Telefone obrigatório.' };
+        // Remove all non-digit characters
         const normalized = normalizePhone(phone);
-        
-        // Must have 10 or 11 digits (with DDD)
+        // Must have 10 (landline) or 11 (mobile) digits
         if (!VALIDATION.PHONE_NUMBERS_ONLY.test(normalized)) {
             return {
                 valid: false,
                 message: 'Telefone inválido. Informe 10 ou 11 dígitos (com DDD).'
             };
         }
-
-        // Check if DDD is valid (11-99, excluding some invalid ranges)
+        // Extract DDD and verify it's within Brazil's valid range (11-99, excluding 20-29)
         const ddd = parseInt(normalized.slice(0, 2), 10);
         if (ddd < 11 || ddd > 99 || (ddd >= 20 && ddd <= 29)) {
             return {
@@ -689,7 +695,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 message: 'DDD inválido. Use um DDD válido do Brasil.'
             };
         }
-
+        // For mobile numbers, ensure the third digit is 9
+        if (normalized.length === 11 && normalized[2] !== '9') {
+            return {
+                valid: false,
+                message: 'Telefone celular deve ter o dígito 9 após o DDD.'
+            };
+        }
+        // Reject obviously invalid patterns like all repeated digits
+        const repeated = normalized.split('').every(c => c === normalized[0]);
+        if (repeated) {
+            return {
+                valid: false,
+                message: 'Telefone inválido. Não pode conter todos os mesmos dígitos.'
+            };
+        }
         return { valid: true, message: '' };
     }
 
@@ -762,6 +782,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
 
+        // Validate payment method
+        if (!paymentSelect.value) {
+            showToast('Selecione a forma de pagamento.', 'error');
+            paymentSelect.focus();
+            return false;
+        }
+
         return true;
     }
 
@@ -773,25 +800,15 @@ document.addEventListener('DOMContentLoaded', () => {
         phoneInput.setAttribute('autocomplete', 'tel');
         
         phoneInput.addEventListener('input', function(e) {
-            const cursorPosition = e.target.selectionStart;
-            let value = normalizePhone(e.target.value);
+            // Extract only digits and limit to 11
+            let digits = normalizePhone(e.target.value).slice(0, 11);
             
-            // Limit to 11 digits
-            if (value.length > 11) {
-                value = value.slice(0, 11);
-            }
+            // Apply progressive formatting
+            const formatted = formatPhone(digits);
+            e.target.value = formatted;
             
-            // Format as user types
-            if (value.length > 0) {
-                const formatted = formatPhone(value);
-                e.target.value = formatted;
-                
-                // Restore cursor position (adjust for added formatting characters)
-                const newCursorPos = Math.min(cursorPosition + (formatted.length - e.target.value.length), formatted.length);
-                e.target.setSelectionRange(newCursorPos, newCursorPos);
-            } else {
-                e.target.value = '';
-            }
+            // Always place cursor at end (natural typing behavior)
+            e.target.setSelectionRange(formatted.length, formatted.length);
         });
 
         // Allow paste and format

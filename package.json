@@ -1,7 +1,7 @@
 {
   "name": "devtapioca",
   "version": "1.0.0",
-  "description": "Site PWA para uma tapiocaria - DevTapioca",
+  "description": "Site PWA para uma tapiocaria - devtapioca",
   "scripts": {
     "build": "npm run build:js && npm run build:css",
     "build:js": "esbuild script.js --minify --bundle --outfile=dist/script.min.js --platform=browser",
