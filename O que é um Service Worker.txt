@@ -1,0 +1,103 @@
+O que é um Service Worker?
+O Service Worker é um script que roda em segundo plano no navegador, separado da página. Ele é a base das Progressive Web Apps (PWAs) e permite funcionalidades como:
+
+Cache offline — o site funciona sem internet
+Notificações push
+Sincronização em segundo plano
+Interceptação de requisições de rede
+Como se registra um Service Worker (exemplo prático)
+1. Arquivo service-worker.js
+Crie um arquivo na raiz do seu projeto chamado service-worker.js:
+
+javascript
+
+// service-worker.js
+
+const CACHE_NAME = 'devtapioca-v1';
+const urlsToCache = [
+  '/',
+  '/index.html',
+  '/styles.css',
+  '/script.js',
+  '/manifest.json'
+];
+
+// Instalação: cacheia os arquivos
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => cache.addAll(urlsToCache))
+  );
+});
+
+// Ativação: limpa caches antigos
+self.addEventListener('activate', event => {
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheName !== CACHE_NAME) {
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
+});
+
+// Intercepta requisições de rede
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        // Se tem no cache, retorna do cache
+        if (response) {
+          return response;
+        }
+        // Senão, faz a requisição normal
+        return fetch(event.request);
+      })
+  );
+});
+2. Registro no JavaScript da página (script.js)
+No seu arquivo principal de JavaScript (que no seu caso parece ser o script.js), você registra o Service Worker assim:
+
+javascript
+
+Copiar
+// script.js
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(registration => {
+        console.log('Service Worker registrado com sucesso:', registration.scope);
+      })
+      .catch(error => {
+        console.log('Falha no registro do Service Worker:', error);
+      });
+  });
+}
+A mensagem que você viu no console (Service Worker registrado com sucesso: https://kaiobrl.github.io/DevTapioca/) corresponde exatamente ao registration.scope — que é a URL base onde o Service Worker tem permissão para atuar.
+
+3. Pontos de atenção
+
+Ponto	Detalhe
+HTTPS obrigatório	Service Worker só funciona em HTTPS (ou localhost para desenvolvimento)
+Escopo	O Service Worker só controla páginas dentro do seu escopo. Se registrar em /, controla todo o site
+Atualização	Mudanças no service-worker.js só são aplicadas quando o navegador recarrega a página
+Cache manual	Você é responsável por gerenciar o cache (adicionar, atualizar, remover)
+Debug	Use as ferramentas do navegador: Chrome → DevTools → Application → Service Workers
+4. Fluxo resumido
+less
+
+Página carrega
+    ↓
+JavaScript registra service-worker.js
+    ↓
+Navegador instala o SW → ativa → começa a interceptar requisições
+    ↓
+Quando há requisição de rede (fetch), o SW pode:
+   • Responder do cache
+   • Fazer a requisição real
+   • Até mesmo responder com conteúdo customizado

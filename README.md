@@ -6,132 +6,84 @@
 
 ## ✨ Visão geral
 
-**DevTapioca** é um PWA responsivo para uma tapiocaria artesanal. Construído com **HTML**, **CSS** e **JavaScript** puro (sem frameworks), o site oferece:
+**DevTapioca** é um PWA (Progressive Web App) moderno e responsivo para uma tapiocaria artesanal. O projeto evoluiu de um site estático para uma aplicação robusta, utilizando **Arquitetura Modular** e **JavaScript Moderno (ES6+)**.
 
-- Navegação mobile‑first fluida
-- Carrinho de compras persistente via `localStorage`
-- Checkout automático por **WhatsApp**
-- Tema claro/escuro com preferência salva
-- Estratégias avançadas de **Service Worker** (pre‑cache, network‑first, runtime cache)
-- Compatibilidade offline (fallback `offline.html`)
-- Acessibilidade com atributos `aria-*` e foco visível
+### Principais Funcionalidades:
+- **Arquitetura Modular**: Código organizado em módulos ES6 para alta manutenibilidade.
+- **Cardápio Dinâmico**: Renderização inteligente baseada em dados, facilitando atualizações.
+- **PWA Completo**: Instalável, funciona offline e suporta notificações.
+- **Carrinho de Compras**: Persistente via `localStorage` com cálculo em tempo real.
+- **Checkout via WhatsApp**: Envio de pedido estruturado diretamente para o vendedor.
+- **Acessibilidade (A11y)**: Focus trap em modais, semântica HTML5 e suporte a leitores de tela.
+- **Performance**: Otimização de imagens com `srcset` e estratégias de cache avançadas.
 
 ## 📦 Tecnologias
 
 | Tecnologia | Uso |
 |------------|-----|
-| **HTML5** | Estrutura semântica da página |
-| **CSS3**  | Layout responsivo, temas, animações suaves |
-| **JavaScript (ES6+)** | Lógica de carrinho, validação, registro do SW |
-| **PWA** (manifest, Service Worker) | Experiência offline e instalação como app |
-| **Google Fonts – Inter** | Tipografia moderna |
-| **Icons – Flaticon / Unsplash** | Imagens de alta qualidade |
-
-## 📱 Redes Sociais
-
-[![Instagram](https://img.shields.io/badge/Instagram-%E2%9D%A4-white?logo=instagram&logoColor=white)](https://instagram.com/yourprofile)
+| **HTML5** | Estrutura semântica e acessível |
+| **CSS3**  | Design responsivo, temas (Dark/Light) e animações |
+| **JavaScript (ES6+)** | Módulos, Fetch API, LocalStorage e DOM Dinâmico |
+| **Service Workers** | Cache Offline, Pre-cache e Notificações Push |
+| **PWA Manifest** | Transformação em aplicativo nativo |
 
 ## 📂 Estrutura do projeto
 
 ```
 DevTapioca/
-├─ assets/                # ícones e imagens estáticas
-│   └─ icons/            # ícones PWA
-├─ index.html            # página principal
-├─ styles.css            # estilos globais
-├─ script.js             # lógica de UI e carrinho
-├─ sw.js                 # Service Worker
-├─ manifest.json         # metadata PWA
-├─ offline.html          # fallback offline
-├─ package.json          # scripts npm (build/minify)
-└─ README.md             # este documento
+├─ src/                   # Código fonte modular
+│   ├─ constants/         # Configurações globais e validações
+│   ├─ data/              # Dados do cardápio (menuData.js)
+│   ├─ modules/           # Lógica de negócio (cart, menu, checkout, etc.)
+│   └─ utils/             # Auxiliares (toast, helpers, focus trap)
+├─ assets/                # Ícones e recursos estáticos
+├─ index.html            # Ponto de entrada HTML
+├─ script.js             # Orquestrador principal (Main Entry)
+├─ sw.js                 # Service Worker (Gerenciamento de Cache)
+├─ manifest.json         # Metadados do PWA
+├─ offline.html          # Fallback para ausência de conexão
+└─ package.json          # Scripts e dependências
 ```
 
 ## 🚀 Rodando localmente
 
-1. **Instale as dependências** (apenas dev scripts):
+1. **Instale as dependências** (opcional para build):
    ```bash
    npm install
    ```
-2. **Inicie um servidor local** (HTTPS ou `localhost` é obrigatório para o SW):
+2. **Inicie um servidor local**:
+   Como o projeto utiliza **ES Modules** e **Service Workers**, é obrigatório o uso de um servidor (HTTP/HTTPS).
    ```bash
-   # usando Python
-   python -m http.server 5000
-   # ou com http‑server
+   # Usando npx (recomendado)
    npx http-server -p 5000
    ```
-3. Abra o navegador em `http://localhost:5000`.
+3. Abra `http://localhost:5000` no seu navegador.
 
-> **⚠️ Atenção:** Não abra o arquivo via `file://` – o Service Worker não pode ser registrado nesse contexto.
+> **Nota:** O Service Worker requer uma origem segura (`localhost` ou `https`).
 
-## 🛠️ Build para produção
+## 🛠️ Arquitetura Modular
 
-O `package.json` inclui scripts de minificação usando **terser** e **clean‑css**:
+O projeto utiliza **ES Modules** nativos. A lógica foi separada para garantir que o crescimento do app seja sustentável:
+- **`cart.js`**: Gerencia o estado do carrinho e persistência.
+- **`menu.js`**: Responsável pela filtragem e renderização dos itens.
+- **`checkout.js`**: Validação rigorosa de formulários e integração com WhatsApp.
+- **`ui.js`**: Controla elementos globais como menu mobile e tema dark.
 
-```bash
-npm run build
-```
+## � PWA & Offline
 
-Isso gera:
-- `dist/script.min.js`
-- `dist/styles.min.css`
+- **Estratégias de Cache**:
+  - `Network-first`: Para o HTML principal, garantindo sempre a versão mais nova.
+  - `Cache-first`: Para imagens e fontes (alta performance).
+  - `Stale-while-revalidate`: Para scripts e estilos.
+- **Notificações**: Suporte integrado para permissões de notificação, preparando o app para engajamento via Push.
 
-Substitua os arquivos referenciados em `index.html` pelos minificados antes de publicar.
+## 🎨 Temas e Personalização
 
-## 📱 PWA & Service Worker
-
-- **`manifest.json`** define ícones, nome e tema de cor.
-- **`sw.js`** pre‑cacheia recursos críticos (`PRECACHE_ASSETS`) e usa estratégias:
-  - *Network‑first* para navegações HTML
-  - *Cache‑first* para imagens
-  - Fallback para `offline.html` quando a rede falha.
-- Ao atualizar `sw.js`, aumente `APP_VERSION` ou altere `CACHE_NAME` para forçar a atualização.
-
-## 🎨 Tema claro/escuro
-
-O toggle (`#theme-toggle`) troca entre os temas e persiste a escolha em `localStorage`. A cor principal (`#ff6b6b`) foi escolhida para contraste vibrante.
-
-## 🔐 Segurança – CSP
-
-Meta tag CSP básica está presente em `index.html`:
-```
-default-src 'self';
-script-src 'self' 'unsafe-inline';
-style-src 'self' 'unsafe-inline';
-img-src 'self' data: https:;
-... 
-```
-Para produção, recomenda‑se mover a política para cabeçalhos HTTP e remover `'unsafe-inline'` usando hashes ou nonces.
-
-## 🐞 Resolução de problemas comuns
-
-| Problema | Solução |
-|----------|--------|
-| **Service Worker não registra** | Certifique‑se de estar usando `http://localhost` ou HTTPS. Não abra via `file://`.
-| **Erro `Unexpected token '<'`** | Um script está carregando HTML – verifique caminhos de `src` em `script.js`.
-| **CSP bloqueia estilos** | Remova `'unsafe-inline'` e adicione hashes gerados durante o build.
-
-## 🔮 Roadmap de Atualizações Futuras (Verificação Profunda)
-
-Após uma análise profunda da base de código atual, identificamos os seguintes pontos de melhoria para futuras versões:
-
-### 1. Refatoração e Arquitetura
-- **Modularização do JavaScript:** O arquivo `script.js` (atualmente com ~1000 linhas) deve ser dividido em módulos (ES Modules). Sugestão de divisão: `cart.js`, `validation.js`, `ui.js` e `theme.js`.
-- **Gerenciamento de Estado:** Implementar um padrão mais robusto para o carrinho em vez de manipulação direta de array e DOM, facilitando a escalabilidade.
-- **Validação HTML5 Avançada:** Integrar a _Constraint Validation API_ nativa do HTML5 junto com o JavaScript para validações mais performáticas e acessíveis (`aria-invalid`, `aria-describedby`).
-
-### 2. Performance e UX
-- **Lazy Loading Aprimorado:** Utilizar `IntersectionObserver` para um carregamento de imagens mais inteligente e suave, possivelmente adicionando placeholders em base64 (blur-up).
-- **Feedback de Máscaras:** Refinar as máscaras de input (como telefone e moeda) para lidar melhor com cenários de colar texto (paste) e _drag-and-drop_ de dados.
-- **Notificações Push:** Implementar _Web Push Notifications_ no Service Worker para avisar o cliente sobre o status de pedidos e promoções.
-
-### 3. Segurança
-- **Aperfeiçoamento da CSP:** Remover permissões de `'unsafe-inline'` da _Content Security Policy_ gerando hashes (SHA-256) ou _nonces_ durante o processo de build para scripts e estilos.
-- **Sanitização Reforçada:** Adicionar uma biblioteca leve (ex: DOMPurify) ou reforçar o regex de limpeza no input de nome e mensagens enviadas via WhatsApp para prevenir ataques baseados em injeção, mesmo que os dados não vão para um banco de dados próprio.
+O sistema de temas utiliza variáveis CSS e persiste a preferência do usuário. A paleta de cores foi desenhada para garantir contraste e legibilidade tanto no modo claro quanto no escuro.
 
 ## 🤝 Contribuição
 
-Contribuições são bem‑vindas! Fork o repositório, abra um *pull request* e siga as boas práticas de codestyle.
+Este é um projeto de aprendizado contínuo. Sinta-se à vontade para abrir issues ou enviar Pull Requests.
 
 ## 📄 Licença
 
@@ -139,4 +91,4 @@ Distribuído sob a licença **MIT**. Veja o arquivo `LICENSE` para mais detalhes
 
 ---
 
-*Desenvolvido com 🧡 e muita tapioca!*
+*Desenvolvido com 🧡 e arquitetura limpa!*

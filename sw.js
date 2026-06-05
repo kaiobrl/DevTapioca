@@ -1,11 +1,20 @@
 // Version control - increment when updating assets
-const APP_VERSION = '1.0.1';
+const APP_VERSION = '1.0.3';
 const CACHE_NAME = `tapioca-v${APP_VERSION.replace(/\./g, '-')}`;
 const PRECACHE_ASSETS = [
     './',
     './index.html',
     './styles.css',
     './script.js',
+    './src/constants/config.js',
+    './src/data/menuData.js',
+    './src/utils/toast.js',
+    './src/utils/helpers.js',
+    './src/modules/ui.js',
+    './src/modules/cart.js',
+    './src/modules/menu.js',
+    './src/modules/checkout.js',
+    './src/modules/sw-client.js',
     './manifest.json',
     './offline.html',
     './assets/icons/icon-192.svg',
@@ -118,8 +127,13 @@ self.addEventListener('fetch', (event) => {
 
     const url = new URL(request.url);
 
+    // Dynamic cache for external APIs (like Google Fonts or Unsplash)
+    const isExternalAPI = url.hostname.includes('fonts.googleapis.com') || 
+                          url.hostname.includes('fonts.gstatic.com') ||
+                          url.hostname.includes('unsplash.com');
+
     // Images: cache-first with runtime cache
-    if (request.destination === 'image' || /\.(png|jpg|jpeg|gif|webp|svg)$/.test(url.pathname)) {
+    if (request.destination === 'image' || /\.(png|jpg|jpeg|gif|webp|svg)$/.test(url.pathname) || isExternalAPI) {
         event.respondWith(
             caches.open(RUNTIME_IMAGE_CACHE).then(async (cache) => {
                 const cached = await cache.match(request);
@@ -129,7 +143,7 @@ self.addEventListener('fetch', (event) => {
                     const responseToCache = response.clone();
                     // put a copy in the runtime cache
                     cache.put(request, responseToCache).catch((err) => {
-                        console.warn('[SW] Failed to cache image:', request.url, err);
+                        console.warn('[SW] Failed to cache resource:', request.url, err);
                     });
                     // keep cache bounded (do not await to speed response)
                     trimCache(RUNTIME_IMAGE_CACHE, MAX_IMAGE_CACHE_SIZE).catch(() => {});
@@ -157,4 +171,80 @@ self.addEventListener('fetch', (event) => {
             return cached || fetchPromise;
         })
     );
+});
+
+// ==========================================
+// PUSH NOTIFICATIONS
+// ==========================================
+
+self.addEventListener('push', (event) => {
+    console.log('[SW] Push received');
+    
+    let data = {
+        title: 'Tapioca do Lula',
+        body: 'Sua tapioca está saindo do fogo!',
+        icon: './assets/icons/icon-192.png',
+        badge: './assets/icons/icon-192.png'
+    };
+
+    if (event.data) {
+        try {
+            data = event.data.json();
+        } catch (e) {
+            data.body = event.data.text();
+        }
+    }
+
+    const options = {
+        body: data.body,
+        icon: data.icon,
+        badge: data.badge,
+        vibrate: [100, 50, 100],
+        data: {
+            dateOfArrival: Date.now(),
+            primaryKey: '1'
+        },
+        actions: [
+            {
+                action: 'explore',
+                title: 'Ver meu pedido',
+                icon: './assets/icons/icon-192.png'
+            },
+            {
+                action: 'close',
+                title: 'Fechar',
+                icon: './assets/icons/icon-192.png'
+            },
+        ]
+    };
+
+    event.waitUntil(
+        self.registration.showNotification(data.title, options)
+    );
+});
+
+self.addEventListener('notificationclick', (event) => {
+    console.log('[SW] Notification click received');
+    
+    event.notification.close();
+
+    if (event.action === 'explore') {
+        event.waitUntil(
+            clients.openWindow('/')
+        );
+    } else {
+        // Default action: focus the window if open, otherwise open new
+        event.waitUntil(
+            clients.matchAll({ type: 'window' }).then((clientList) => {
+                for (const client of clientList) {
+                    if (client.url === '/' && 'focus' in client) {
+                        return client.focus();
+                    }
+                }
+                if (clients.openWindow) {
+                    return clients.openWindow('/');
+                }
+            })
+        );
+    }
 });
