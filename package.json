@@ -1,7 +1,7 @@
 {
-  "name": "devtapioca",
+  "name": "Tapioca do Lula",
   "version": "1.0.0",
-  "description": "Site PWA para uma tapiocaria - devtapioca",
+  "description": "Site PWA para uma tapiocaria - Tapioca do Lula",
   "scripts": {
     "build": "npm run build:js && npm run build:css",
     "build:js": "esbuild script.js --minify --bundle --outfile=dist/script.min.js --platform=browser",
