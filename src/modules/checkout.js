@@ -208,7 +208,7 @@ export function initCheckout() {
             
             showToast('Pedido enviado! Verifique o WhatsApp.', 'success');
             closeCheckoutModal();
-            clearCart(true);
+            clearCart();
         } catch (error) {
             console.error('[Checkout] Erro ao abrir WhatsApp:', error);
             showToast('Erro ao abrir WhatsApp.', 'error');

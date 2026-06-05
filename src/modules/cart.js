@@ -214,15 +214,7 @@ export function decreaseQuantity(index) {
     }
 }
 
-export async function clearCart(force = false) {
-    if (!force) {
-        if (document.hidden || !document.hasFocus()) {
-            showToast('A página não está ativa — ação cancelada.', 'error');
-            return;
-        }
-        const confirmed = await showConfirm('Tem certeza que deseja limpar o carrinho?');
-        if (!confirmed) return;
-    }
+export function clearCart() {
     cart = [];
     saveCart();
     renderCart();
